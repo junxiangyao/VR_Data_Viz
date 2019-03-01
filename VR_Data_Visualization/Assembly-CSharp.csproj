@@ -54,7 +54,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\cube_generator.cs" />
+     <Compile Include="Assets\DataManager.cs" />
+     <Compile Include="Assets\Day.cs" />
      <Compile Include="Assets\Lines.cs" />
+     <Compile Include="Assets\MetaData.cs" />
+     <Compile Include="Assets\Month.cs" />
+     <Compile Include="Assets\Movie.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\MenuSceneLoader.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\PauseMenu.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\SceneAndURLLoader.cs" />
@@ -63,6 +68,7 @@
      <Compile Include="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
+     <Compile Include="Assets\Year.cs" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>/Users/yjx/Documents/Course/VR_Data_Viz/VR_Data_Visualization/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
