@@ -11,16 +11,16 @@ public class Day
         data = new MetaData();
     }
 
-    // Constructor that takes one argument:
-    public Day(int borrows,float[] position)
+    // Constructor that takes arguments:
+    public Day(int check_out_times, float[] position)
     {
-        data = new MetaData(borrows,position);
+        data = new MetaData(check_out_times, position);
     }
 
 
-    public void printInfo()
+    public String printInfo()
     {
-        Console.WriteLine ("DataObj: borrows = "+data.borrows+" pos = "+data.position[0]+", "+data.position[1]+", "+data.position[2]);
+        return "check_out_times = "+data.check_out_times+" position = "+data.position[0]+", "+data.position[1]+", "+data.position[2];
 
     }
 

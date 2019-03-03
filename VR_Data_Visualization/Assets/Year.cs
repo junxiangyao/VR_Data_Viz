@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
 using static Month;
 
@@ -9,24 +12,27 @@ public class Year
     // Constructor that takes no arguments:
     public Year()
     {
-    MonthObjs = new Month[12];
+        MonthObjs = new Month[12];
     }
 
     // Constructor that takes one argument:
     public Year(int year)
     {
-    this.year = year;
-    MonthObjs = new Month[12];
+        this.year = year;
+        MonthObjs = new Month[12];
     }
 
 
-    public void printInfo()
+    public String printInfo()
     {
-        for(int i = 0; i < 12 ; i ++)
+        //buffer
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0 ; i  < 12; i++)
         {
-            Console.WriteLine ("MonthObjs["+i+"] = ");
-            MonthObjs[i].printInfo();
+            sb.Append("MonthObjs["+i+"] = "+MonthObjs[i].printInfo()+"\n");
         }
+        return sb.ToString();
     }
 
 }

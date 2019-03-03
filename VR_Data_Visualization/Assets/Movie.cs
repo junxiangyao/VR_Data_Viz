@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
 using static Year;
 
@@ -11,23 +14,16 @@ public class Movie
         YearObjs = new Year[14];
     }
 
-    // Constructor that takes one argument:
-    //public Movie(int year)
-    //{
-    //this.year = year;
-    //YearObjs = new Year[14];
-    //}
-
-
-
-
-    public void printInfo()
+    public String printInfo()
     {
-        for(int i = 0; i < YearObjs.Length; i ++)
+        //buffer
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0 ; i  < YearObjs.Length; i++)
         {
-            Console.WriteLine ("YearObjs["+i+"] = ");
-            YearObjs[i].printInfo();
+            sb.Append("YearObjs["+i+"] = "+YearObjs[i].printInfo()+"\n");
         }
+        return sb.ToString();
     }
 
 }

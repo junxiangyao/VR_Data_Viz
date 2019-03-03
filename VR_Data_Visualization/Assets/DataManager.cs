@@ -1,4 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
 
 using static Movie;
 
@@ -19,7 +23,7 @@ public class DataManager
             for(int y = 0 ; y<MovieObjs[mv].YearObjs.Length;y++)
             {
                 MovieObjs[mv].YearObjs[y] = new Year(startYear+y);
-                for(int m = 0; m<12;m++)
+                for(int m = 0; m < 12; m++)
                 {
                     MovieObjs[mv].YearObjs[y].MonthObjs[m] = new Month(1+m);
 
@@ -30,33 +34,31 @@ public class DataManager
                 }
             }
         }
-        Console.WriteLine ("Movie and Month structure created");
+        Debug.Log("Movie and Month structure created");
     }
-    // Constructor that takes one argument:
-    //public DataManager(int year)
-    //{
-    //this.year = year;
-    //MovieObjs = new Movie[14];
-    //}
 
     //this function assumes the data is linearly in terms of date
-    public void addData(int mv, int y, int m, int borrows, float[] position)
+    public void addData(int mv, int y, int m, int check_out_times, float[] position)
     {
-        MovieObjs[mv].YearObjs[y-startYear].MonthObjs[m-startMonth].addDay(new Day(borrows,position));
+        MovieObjs[mv].YearObjs[y-startYear].MonthObjs[m-startMonth].addDay(new Day(check_out_times,position));
     }
 
     public MetaData getData(int mv, int y, int m, int d)
     {
-        return ((Day)(MovieObjs[mv].YearObjs[y-startYear].MonthObjs[m-startMonth].dayList[d-1])).data;
+        return MovieObjs[mv].YearObjs[y-startYear].MonthObjs[m-startMonth].dayList[d-1].data;
     }
 
-    public void printInfo()
+    public String printInfo()
     {
-        for(int i = 0; i < MovieObjs.Length; i ++)
+        //buffer
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0 ; i  < MovieObjs.Length; i++)
         {
-            Console.WriteLine ("MonthObjs["+i+"] = ");
-            MovieObjs[i].printInfo();
+            sb.Append("dayList["+i+"] = "+MovieObjs[i].printInfo()+"\n");
         }
+
+        return sb.ToString();
     }
 
 }

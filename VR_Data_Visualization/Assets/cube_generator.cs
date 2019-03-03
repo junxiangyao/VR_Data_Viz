@@ -12,21 +12,6 @@ public class cube_generator : MonoBehaviour
     
     
     
-    static int[] parseLine(string line)
-    {
-        char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
-        string[] spl = line.Split(delimiterChars);
-        int[] output = new int[spl.Length];
-        //System.Console.WriteLine("spl.Length = "+spl.Length);
-        for(int i = 0 ; i  < spl.Length ; i++)
-        {
-            //System.Console.WriteLine("spl[i] = "+spl[i]);
-            output[i] = int.Parse(spl[i]);
-        }
-        //System.Console.WriteLine("output.Length = "+output.Length);
-        return output;
-    }
-    
     void Start()
     {
 
@@ -42,12 +27,11 @@ public class cube_generator : MonoBehaviour
         int counter = 0;  
         string line;  
 
-
         DataManager dm = new DataManager();
 
         int yearIdx = -1;
         int monthIdx = -1;
-        int borrows = -1;
+        int check_out_times = -1;
         float[] position = new float[3];
 
         // Read the file and display it line by line.  
@@ -69,7 +53,7 @@ public class cube_generator : MonoBehaviour
         file.Close();
         
         MetaData md = dm.getData(3,2018,12,27);
-        Debug.Log("md.borrows = "+md.borrows);
+        Debug.Log("md.check_out_times = "+md.check_out_times);
         
     }
 
@@ -80,12 +64,13 @@ public class cube_generator : MonoBehaviour
         {
             sss = ! sss;
         }
-        foreach(GameObject cube in cubes){
+        foreach(GameObject cube in cubes)
+        {
             Pcube.SetActive(sss);
         }
         
         
-         if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             // Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -98,19 +83,34 @@ public class cube_generator : MonoBehaviour
                     Debug.Log("Hit!");
                     hit.transform.gameObject.GetComponent<Renderer>().material.color = new Color(Random.Range(0f,1f), Random.Range(0f,1f), Random.Range(0f,1f));
 
+                }
             }
         }
-    }
     
-  }
+    }
   
-  
-  GameObject generate_cube(Vector3 pos){
+    GameObject generate_cube(Vector3 pos)
+    {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.localScale = new Vector3(0.2f,0.2f,0.2f);
         cube.transform.position = pos;
         cube.GetComponent<Renderer>().material.color = new Color(0,0,0);
         return cube;
-  }
+    }
+
+    static int[] parseLine(string line)
+    {
+        char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
+        string[] spl = line.Split(delimiterChars);
+        int[] output = new int[spl.Length];
+        //System.Console.WriteLine("spl.Length = "+spl.Length);
+        for(int i = 0 ; i  < spl.Length ; i++)
+        {
+            //System.Console.WriteLine("spl[i] = "+spl[i]);
+            output[i] = int.Parse(spl[i]);
+        }
+        //System.Console.WriteLine("output.Length = "+output.Length);
+        return output;
+    }
 
 }

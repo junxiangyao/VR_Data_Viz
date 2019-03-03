@@ -1,38 +1,46 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
 using static Day;
-using System.Collections;
 
 public class Month
 {
-    public int month;
-    public ArrayList dayList;                   
+    public int month_order; // 
+    public List<Day> dayList;  
+    public MetaData data;               
     // Constructor that takes no arguments:
     public Month()
     {
-        this.dayList = new ArrayList();
+        this.dayList = new List<Day>();
+        this.data = new MetaData();
     }
 
     // Constructor that takes one argument:
-    public Month(int month)
+    public Month(int month_order)
     {
-        this.month = month;
-        this.dayList = new ArrayList();
+        this.month_order = month_order;
+        this.dayList = new List<Day>();
+        this.data = new MetaData();
     }
 
 
-    public void addDay(Day dayobj)
+    public void addDay(Day day_obj)
     {
-        dayList.Add(dayobj);
+        dayList.Add(day_obj);
     }
 
-    public void printInfo()
-    {
+    public String printInfo()
+    {  
+        //buffer
+        StringBuilder sb = new StringBuilder();
+
         for(int i = 0 ; i  < dayList.Count; i++)
         {
-            Console.WriteLine ("dayList["+i+"] = ");
-            ((Day)dayList[i]).printInfo();
+            sb.Append("dayList["+i+"] = "+dayList[i].printInfo()+"\n");
         }
+        return sb.ToString();
     }
 
 }
