@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 using static MetaData;
 
@@ -8,13 +9,13 @@ public class Day
     // Constructor that takes no arguments:
     public Day()
     {
-        data = new MetaData();
+        this.data = new MetaData();
     }
 
     // Constructor that takes arguments:
-    public Day(int check_out_times, float[] position)
+    public Day(int check_out_times, Vector3 position)
     {
-        data = new MetaData(check_out_times, position);
+        this.data = new MetaData(check_out_times, position);
     }
 
 
