@@ -13,7 +13,8 @@ public class Month
     public MetaData data;
     public int day_count;
     public GameObject month_data_line;  
-    public GameObject connection_to_next;             
+    public GameObject connection_to_next;     
+    public float LINE_WIDTH = 0.005f;        
     // Constructor that takes no arguments:
     public Month()
     {
@@ -41,20 +42,24 @@ public class Month
     public void drawData(Color c, Material material){
         LineRenderer line_renderer = month_data_line.AddComponent<LineRenderer>();
         line_renderer.material = material;
-        line_renderer.widthMultiplier = 0.005f;
+        line_renderer.widthMultiplier = LINE_WIDTH;
         line_renderer.positionCount = dayList.Count;
-        line_renderer.SetColors(c, c);
+        line_renderer.startColor = c;
+        line_renderer.endColor = c;
         for(int i = 0; i < this.dayList.Count; ++i){
             line_renderer.SetPosition(i, this.dayList[i].data.position);
         }
     }
 
-    public void connectToNext(Color c, Material material){
+    public void connectToNext(Color c, Material material, Vector3 next_point){
         LineRenderer line_renderer = connection_to_next.AddComponent<LineRenderer>();
         line_renderer.material = material;
-        line_renderer.widthMultiplier = 0.01f;
+        line_renderer.widthMultiplier = LINE_WIDTH;
         line_renderer.positionCount = 2;
-        line_renderer.SetColors(c, c);
+        line_renderer.startColor = c;
+        line_renderer.endColor = c;
+        line_renderer.SetPosition(0, this.dayList[dayList.Count - 1].data.position);
+        line_renderer.SetPosition(1, next_point);
     }
 
     public String printInfo()

@@ -24,10 +24,10 @@ public class cube_generator : MonoBehaviour
 
         DataManager dm = new DataManager();
 
-        int yearIdx = -1;
-        int monthIdx = -1;
-        int check_out_times = -1;
-        Vector3 position = new Vector3();
+        // int yearIdx = -1;
+        // int monthIdx = -1;
+        // int check_out_times = -1;
+        // Vector3 position = new Vector3();
 
         // Read the file and display it line by line.  
         System.IO.StreamReader file = new System.IO.StreamReader(@"Assets/sw.csv");  

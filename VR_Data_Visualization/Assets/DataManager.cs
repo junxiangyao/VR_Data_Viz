@@ -31,11 +31,11 @@ public class DataManager
       new Color(119 * 1.0f/255, 138 * 1.0f/255, 45 * 1.0f/255), 
       new Color(255,255,255), 
 
-      new Color(255, 92, 161), 
-      new Color(163, 37, 235), 
+      new Color(255 * 1.0f/255, 92 * 1.0f/255, 161 * 1.0f/255), 
+      new Color(163 * 1.0f/255, 37 * 1.0f/255, 235 * 1.0f/255), 
 
 
-      new Color(209, 192, 165)
+      new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255)
 
     }; 
     // Constructor that takes no arguments:
@@ -94,10 +94,18 @@ public class DataManager
     }
 
     public void drawData(){
-        for(int mv = 0; mv < 8; ++mv){
+        for(int mv = 0; mv < 6; ++mv){
             for(int y = 0; y < 14; ++y){
                 for(int m = 0; m < 12; ++m){
                     MovieObjs[mv].YearObjs[y].MonthObjs[m].drawData(movie_colors[mv],line_material);
+                    //connect to next month
+                    if(m < 11){
+                        MovieObjs[mv].YearObjs[y].MonthObjs[m].connectToNext(movie_colors[mv],line_material, MovieObjs[mv].YearObjs[y].MonthObjs[m+1].dayList[0].data.position);
+                    }
+                }
+                if(y < 13){
+                    //connect to next year
+                    MovieObjs[mv].YearObjs[y].MonthObjs[11].connectToNext(movie_colors[mv],line_material, MovieObjs[mv].YearObjs[y+1].MonthObjs[0].dayList[0].data.position);
                 }
             }
         }

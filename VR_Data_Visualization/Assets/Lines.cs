@@ -111,7 +111,7 @@ public class Lines : MonoBehaviour
 //        
 //        
 
-        lineRenderer2.SetColors(c2, c2);
+        // lineRenderer2.SetColors(c2, c2);
         
         for (int i = 0; i < lengthOfLineRenderer; i++)
         {
