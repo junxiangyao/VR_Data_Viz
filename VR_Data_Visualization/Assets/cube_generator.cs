@@ -10,9 +10,10 @@ public class cube_generator : MonoBehaviour
     public GameObject Pcube;
     // Start is called before the first frame update
 
-    public static float INNER_RADIUS = 2.0f; // 1 meter 
-    public static float INCREASE = 0.00078f * 8;
+    public static float INNER_RADIUS = 20.0f; // 1 meter 
+    public static float INCREASE = 0.00078f * 4;
     public float current_radius = INNER_RADIUS;
+    public DataManager dm;
 
     
     void Start()
@@ -22,12 +23,7 @@ public class cube_generator : MonoBehaviour
         int counter = 0;  
         string line;  
 
-        DataManager dm = new DataManager();
-
-        // int yearIdx = -1;
-        // int monthIdx = -1;
-        // int check_out_times = -1;
-        // Vector3 position = new Vector3();
+        dm = new DataManager();
 
         // Read the file and display it line by line.  
         System.IO.StreamReader file = new System.IO.StreamReader(@"Assets/sw.csv");  
@@ -54,15 +50,16 @@ public class cube_generator : MonoBehaviour
         dm.drawData();
 
         //Test Boxes
-        Color c = new Color(0,0,0);
+        Color c = new Color(0.75f,0.75f,0.75f);
 
         // for(int y = 0; y < 14; ++y){
         //     for(int m = 0; m < 12; ++m){
-        //         for(int d = 0; d < dm.MovieObjs[8].YearObjs[y].MonthObjs[m].dayList.Count; ++d){
-        //             Pcube = generate_cube(dm.MovieObjs[8].YearObjs[y].MonthObjs[m].dayList[d].data.position, c);
+        //         for(int d = 0; d < dm.MovieObjs[8].year_objects[y].MonthObjs[m].dayList.Count; ++d){
+        //             Pcube = generate_cube(dm.MovieObjs[8].year_objects[y].MonthObjs[m].dayList[d].data.position, c);
         //         }
         //     }
         // }
+
         c = new Color(1,0,0);
         Pcube = generate_cube(new Vector3(0,0,0), c);
         Pcube = generate_cube(new Vector3(0,2,0), c);
@@ -81,10 +78,16 @@ public class cube_generator : MonoBehaviour
         {
             sss = ! sss;
         }
-        foreach(GameObject cube in cubes)
-        {
-            Pcube.SetActive(sss);
+        for(int mv = 0; mv < 11; ++mv){
+            dm.MovieObjs[mv].game_object.SetActive(sss); 
         }
+
+
+
+        // foreach(GameObject cube in cubes)
+        // {
+
+        // }
         
         
         if (Input.GetMouseButtonDown(0))
@@ -106,14 +109,17 @@ public class cube_generator : MonoBehaviour
     
     }
   
-    GameObject generate_cube(Vector3 pos, Color color)
+    public GameObject generate_cube(Vector3 pos, Color color)
     {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
+        // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
+        cube.transform.localScale = new Vector3(0.12f,0.12f,0.12f);
         cube.transform.position = pos;
+        cube.GetComponent<Collider>().isTrigger = true;
         cube.GetComponent<Renderer>().material.color = color;
         return cube;
     }
+
 
     static int[] parseLine(string line)
     {

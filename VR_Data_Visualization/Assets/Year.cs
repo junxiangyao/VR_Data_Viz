@@ -8,6 +8,7 @@ using static Month;
 public class Year
 {
     public int year;
+    public GameObject year_object;
     public Month[] MonthObjs;
     // Constructor that takes no arguments:
     public Year()

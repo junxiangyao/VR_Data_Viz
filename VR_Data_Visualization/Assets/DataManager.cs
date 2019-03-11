@@ -47,16 +47,16 @@ public class DataManager
         for(int mv = 0 ; mv<MovieObjs.Length;mv++)
         {
             MovieObjs[mv] = new Movie(); 
-            for(int y = 0 ; y<MovieObjs[mv].YearObjs.Length;y++)
+            for(int y = 0 ; y<MovieObjs[mv].years.Length;y++)
             {
-                MovieObjs[mv].YearObjs[y] = new Year(startYear+y);
+                MovieObjs[mv].years[y] = new Year(startYear+y);
                 for(int m = 0; m < 12; m++)
                 {
                     if((y == 3 || y == 7 || y == 11)&& m == 1){
                         //leap year
-                        MovieObjs[mv].YearObjs[y].MonthObjs[m] = new Month(1+m, 29);
+                        MovieObjs[mv].years[y].MonthObjs[m] = new Month(1+m, 29);
                     }else{
-                        MovieObjs[mv].YearObjs[y].MonthObjs[m] = new Month(1+m, DAYS_IN_MONTH[m]);
+                        MovieObjs[mv].years[y].MonthObjs[m] = new Month(1+m, DAYS_IN_MONTH[m]);
                     }
 
                     //for(int d = 0 ; d<5; d++)
@@ -76,36 +76,42 @@ public class DataManager
         // the int m in the arguments is actually starts from 1, not 0, since there is no month 0 in real life.
         // int d is also starts from 1, not 0
         // current_radius = 3.0f;
-        float point_height =  (float)check_out_times * 1.7f / 7.0f;
+        float point_height =  (float)check_out_times / 16.0f;
         if(mv == 8 || mv == 11){
-            point_height /= 5.0f; 
+            point_height /= 3.0f; 
         }
         position = new Vector3(current_radius * Mathf.Sin(Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6), 
                       point_height, // 1.7 m is the average height in exhibition spatial design
         current_radius * Mathf.Cos(Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6));
   
         // day hasn't been implemented yet. considering add a day_count and month buffer in the main script.
-        MovieObjs[mv].YearObjs[y-startYear].MonthObjs[m-startMonth].addDay(new Day(check_out_times,position));
+        MovieObjs[mv].years[y-startYear].MonthObjs[m-startMonth].addDay(new Day(check_out_times,position));
     }
 
     public MetaData getData(int mv, int y, int m, int d)
     {
-        return MovieObjs[mv].YearObjs[y-startYear].MonthObjs[m-startMonth].dayList[d-1].data;
+        return MovieObjs[mv].years[y-startYear].MonthObjs[m-startMonth].dayList[d-1].data;
     }
 
     public void drawData(){
-        for(int mv = 0; mv < 6; ++mv){
+        for(int mv = 0; mv < 11; ++mv){
+            if(mv==8){continue;}
             for(int y = 0; y < 14; ++y){
                 for(int m = 0; m < 12; ++m){
-                    MovieObjs[mv].YearObjs[y].MonthObjs[m].drawData(movie_colors[mv],line_material);
-                    //connect to next month
+                    //generate all the lines 
+                    MovieObjs[mv].years[y].MonthObjs[m].drawData(movie_colors[mv],line_material);
+                    //set parent
+                    MovieObjs[mv].years[y].MonthObjs[m].month_data_line.transform.SetParent(MovieObjs[mv].game_object.transform, true);
+                    //for the first 11 months, draw connectors that connect to next month
                     if(m < 11){
-                        MovieObjs[mv].YearObjs[y].MonthObjs[m].connectToNext(movie_colors[mv],line_material, MovieObjs[mv].YearObjs[y].MonthObjs[m+1].dayList[0].data.position);
+                        MovieObjs[mv].years[y].MonthObjs[m].connectToNext(movie_colors[mv],line_material, MovieObjs[mv].years[y].MonthObjs[m+1].dayList[0].data.position);
+                        MovieObjs[mv].years[y].MonthObjs[m].connection_to_next.transform.SetParent(MovieObjs[mv].game_object.transform, true);
                     }
                 }
                 if(y < 13){
-                    //connect to next year
-                    MovieObjs[mv].YearObjs[y].MonthObjs[11].connectToNext(movie_colors[mv],line_material, MovieObjs[mv].YearObjs[y+1].MonthObjs[0].dayList[0].data.position);
+                    //for the last month, connect to next year
+                    MovieObjs[mv].years[y].MonthObjs[11].connectToNext(movie_colors[mv],line_material, MovieObjs[mv].years[y+1].MonthObjs[0].dayList[0].data.position);
+                    MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.transform.SetParent(MovieObjs[mv].game_object.transform, true);
                 }
             }
         }

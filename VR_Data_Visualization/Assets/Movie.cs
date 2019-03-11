@@ -2,16 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 using static Year;
 
 public class Movie
 {
-    public Year[] YearObjs;
+    public Year[] years;
+    public GameObject game_object;
+
     // Constructor that takes no arguments:
     public Movie()
     {
-        YearObjs = new Year[14];
+        years = new Year[14];
+        game_object = new GameObject();
     }
 
     public String printInfo()
@@ -19,9 +23,9 @@ public class Movie
         //buffer
         StringBuilder sb = new StringBuilder();
 
-        for(int i = 0 ; i  < YearObjs.Length; i++)
+        for(int i = 0 ; i  < years.Length; i++)
         {
-            sb.Append("YearObjs["+i+"] = "+YearObjs[i].printInfo()+"\n");
+            sb.Append("YearObjs["+i+"] = "+years[i].printInfo()+"\n");
         }
         return sb.ToString();
     }

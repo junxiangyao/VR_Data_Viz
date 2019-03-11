@@ -8,11 +8,11 @@ using static Day;
 
 public class Month
 {
-    public int month_order; // 
-    public List<Day> dayList;  
-    public MetaData data;
-    public int day_count;
-    public GameObject month_data_line;  
+    public int month_order; //the order of the month 
+    public List<Day> dayList; // a list of day objects containing data from that day  
+    public MetaData data; // containing monthly data
+    public int day_count; // number of the days in month
+    public GameObject month_data_line;  // main graphic
     public GameObject connection_to_next;     
     public float LINE_WIDTH = 0.005f;        
     // Constructor that takes no arguments:

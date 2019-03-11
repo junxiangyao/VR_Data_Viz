@@ -57,6 +57,7 @@
      <Compile Include="Assets\DataManager.cs" />
      <Compile Include="Assets\Day.cs" />
      <Compile Include="Assets\Lines.cs" />
+     <Compile Include="Assets\MeshTest.cs" />
      <Compile Include="Assets\MetaData.cs" />
      <Compile Include="Assets\Month.cs" />
      <Compile Include="Assets\Movie.cs" />
@@ -68,6 +69,7 @@
      <Compile Include="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
+     <Compile Include="Assets\StandardShaderUtils.cs" />
      <Compile Include="Assets\VRTK\Examples\ExampleResources\SceneResources\[001 - Interactions] ControllerEvents\Scripts\VRTKExample_ControllerEventsDelegateListeners.cs" />
      <Compile Include="Assets\VRTK\Examples\ExampleResources\SceneResources\[002 - Pointers] StraightPointer\Scripts\VRTKExample_PointerObjectHighlighterActivator.cs" />
      <Compile Include="Assets\VRTK\Examples\ExampleResources\SceneResources\[003 - Pointers] BezierPointer\Scripts\VRTKExample_BezierPointerChanger.cs" />
@@ -415,8 +417,10 @@
      <None Include="Assets\VRTK\Source\Scripts\Internal\Shaders\UIOverlay.shader" />
      <None Include="Assets\VRTK\Source\Scripts\Internal\Shaders\VRTK_OutlineBasic.shader" />
      <None Include="Assets\VRTK\Source\Scripts\Internal\Shaders\AdaptiveQualityDebugVisualization.shader" />
+     <None Include="Assets\SampleScenes\Shaders\Standard-2Sided.shader" />
      <None Include="Assets\VRTK\Source\Scripts\Internal\Shaders\VRTK_TunnelEffect.shader" />
      <None Include="Assets\VRTK\Source\Scripts\Internal\Shaders\TransparentFresnelBehind.shader" />
+     <None Include="Assets\Standard-2Sided.shader" />
      <None Include="Assets\VRTK\Source\Scripts\Internal\Shaders\Unlit_TransparentColor.shader" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
  <Reference Include="Unity.TextMeshPro.Editor">
