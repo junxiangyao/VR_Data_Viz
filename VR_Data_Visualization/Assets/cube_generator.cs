@@ -88,36 +88,50 @@ public class cube_generator : MonoBehaviour
             dm.show_years[2] = !dm.show_years[2]; 
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            dm.show_months[0] = !dm.show_months[0]; 
+        }
+
+
+
+        // movie, year, month level show/hide control
+
         for(int mv = 0; mv < 12; ++mv)
         {
             dm.MovieObjs[mv].game_object.SetActive(dm.show_movies[mv]); 
-        }
-        for(int mv = 0; mv < 12; ++mv)
-        {
             for(int y = 0; y < 14; ++y)
             {
                 dm.MovieObjs[mv].years[y].year_game_object.SetActive(dm.show_years[y]); 
+                for(int m = 0; m < 12; ++m)
+                {
+                    dm.MovieObjs[mv].years[y].MonthObjs[m].month_data_line.SetActive(dm.show_months[m]);  // main graphic
+                    if(m < 11)
+                    {
+                        // if next month won't be drawn
+                        if(!dm.show_months[m+1])
+                        {
+                            dm.MovieObjs[mv].years[y].MonthObjs[m].connection_to_next.SetActive(dm.show_months[m+1]);
+                        }else{
+                            dm.MovieObjs[mv].years[y].MonthObjs[m].connection_to_next.SetActive(dm.show_months[m]);
+                        }
+                    }
+                }
+                // ;
                 //because the last year has nothing to connect with, the last year doesn't have a connector;
                 //thus, only the first 13 years needed to be checked
                 if(y < 13){
                     //if next year is not shown, hide the connector. connector is the line connecting the end of this year and the start of next year.
-                    if(!dm.show_years[y+1]){
-                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(dm.show_years[y+1]); 
+                    // or if January is not shown in the scene, hide Decemembers connector.
+                    if(!dm.show_years[y+1] || !dm.show_months[0]){
+                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(false); 
                     }else{
-                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(dm.show_years[y]); 
+                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(dm.show_months[11]); 
                     }
                 }
            }
         }
 
-
-
-
-
-        // foreach(GameObject cube in cubes)
-        // {
-
-        // }
         
         
         if (Input.GetMouseButtonDown(0))
