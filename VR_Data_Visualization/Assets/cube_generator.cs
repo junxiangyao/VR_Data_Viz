@@ -13,7 +13,7 @@ public class cube_generator : MonoBehaviour
     public static float INNER_RADIUS = 20.0f; // 1 meter 
     public static float INCREASE = 0.00078f * 4;
     public float current_radius = INNER_RADIUS;
-    public DataManager dm;
+    public DataManager dm; 
 
     
     void Start()
@@ -36,6 +36,8 @@ public class cube_generator : MonoBehaviour
             {
                 dm.addData(movieIdx,splits[0],splits[1],splits[2],splits[3+movieIdx],current_radius);
             }
+
+            // growing radius
             current_radius += INCREASE;
             //Debug.Log("object at year["+splits[0]+"], mon["+splits[1]+"], day["+splits[2]+"]");
             counter++;  
@@ -76,11 +78,39 @@ public class cube_generator : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            sss = ! sss;
+            for(int mv = 0; mv < 12; ++mv)
+            {
+                dm.show_movies[mv] = !dm.show_movies[mv]; 
+            }
         }
-        for(int mv = 0; mv < 11; ++mv){
-            dm.MovieObjs[mv].game_object.SetActive(sss); 
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            dm.show_years[2] = !dm.show_years[2]; 
         }
+
+        for(int mv = 0; mv < 12; ++mv)
+        {
+            dm.MovieObjs[mv].game_object.SetActive(dm.show_movies[mv]); 
+        }
+        for(int mv = 0; mv < 12; ++mv)
+        {
+            for(int y = 0; y < 14; ++y)
+            {
+                dm.MovieObjs[mv].years[y].year_game_object.SetActive(dm.show_years[y]); 
+                //because the last year has nothing to connect with, the last year doesn't have a connector;
+                //thus, only the first 13 years needed to be checked
+                if(y < 13){
+                    //if next year is not shown, hide the connector. connector is the line connecting the end of this year and the start of next year.
+                    if(!dm.show_years[y+1]){
+                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(dm.show_years[y+1]); 
+                    }else{
+                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(dm.show_years[y]); 
+                    }
+                }
+           }
+        }
+
+
 
 
 

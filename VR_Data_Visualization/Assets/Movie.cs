@@ -12,9 +12,9 @@ public class Movie
     public GameObject game_object;
 
     // Constructor that takes no arguments:
-    public Movie()
+    public Movie(int num)
     {
-        years = new Year[14];
+        years = new Year[num];
         game_object = new GameObject();
     }
 
