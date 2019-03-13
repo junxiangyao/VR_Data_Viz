@@ -1,6 +1,10 @@
-﻿using System.Collections;
+﻿// source: https://answers.unity.com/questions/1004666/change-material-rendering-mode-in-runtime.html
+// author: bellicapax
+
+
+using System.Collections;
 using System.Collections.Generic;
- using UnityEngine;
+using UnityEngine;
  
  public static class StandardShaderUtils
  {

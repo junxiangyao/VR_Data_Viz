@@ -34,11 +34,12 @@ public class DataManager
 
       new Color(168 * 1.0f/255, 204 * 1.0f/255, 26 * 1.0f/255), 
       new Color(119 * 1.0f/255, 138 * 1.0f/255, 45 * 1.0f/255), 
-      new Color(255,255,255), 
 
       new Color(255 * 1.0f/255, 92 * 1.0f/255, 161 * 1.0f/255), 
       new Color(163 * 1.0f/255, 37 * 1.0f/255, 235 * 1.0f/255), 
 
+
+      new Color(255,255,255), 
 
       new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255)
 
@@ -60,7 +61,7 @@ public class DataManager
         {
             show_movies[i] = true;
         }
-        show_movies[8] = false;
+        show_movies[10] = false;
         show_movies[11] = false;
         for(int i = 0; i < NUMBER_OF_YEARS; ++i)
         {
@@ -70,7 +71,7 @@ public class DataManager
         {
             show_months[i] = true;
         }
-        for(int mv = 0 ; mv<MovieObjs.Length;mv++)
+        for(int mv = 0 ; mv < MovieObjs.Length;mv++)
         {
             MovieObjs[mv] = new Movie(NUMBER_OF_YEARS); 
             for(int y = 0 ; y<MovieObjs[mv].years.Length;y++)
@@ -103,9 +104,14 @@ public class DataManager
         // int d is also starts from 1, not 0
         // current_radius = 3.0f;
         float point_height =  (float)check_out_times / 16.0f;
-        if(mv == 8 || mv == 11){
+        if(mv == 10 || mv == 11){
             point_height /= 3.0f; 
         }
+
+        // float point_height =  (float)check_out_times  * 1.7f/8;
+        // if(mv == 8 || mv == 11){
+        //     point_height /= 3.0f; 
+        // }
         position = new Vector3(current_radius * Mathf.Sin(Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6), 
                       point_height, // 1.7 m is the average height in exhibition spatial design
         current_radius * Mathf.Cos(Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6));
@@ -119,8 +125,10 @@ public class DataManager
         return MovieObjs[mv].years[y-startYear].MonthObjs[m-startMonth].dayList[d-1].data;
     }
 
-    public void drawData(){
+    public void drawData()
+    {
         for(int mv = 0; mv < 12; ++mv){
+            // draw main data line
             // if(mv==8){continue;}
             for(int y = 0; y < 14; ++y){
                 for(int m = 0; m < 12; ++m){
@@ -143,6 +151,33 @@ public class DataManager
                 MovieObjs[mv].years[y].year_game_object.transform.SetParent(MovieObjs[mv].game_object.transform, true);
             }
         }
+    }
+
+
+    public void drawDate()
+    {
+        for(int mv = 0; mv < NUMBER_OF_MOVIES; ++mv)
+        // for(int mv = 0; mv < 1; ++mv)
+        {
+            if(mv==8||mv==11){continue;}
+            for(int m = 0; m < 12; ++m)
+            {
+                MovieObjs[mv].date_lines_month[m] = new GameObject();
+                for(int d = 0; d < DAYS_IN_MONTH[m]; ++d)
+                {
+                    List<Vector3> day_buffer = new List<Vector3>();
+                    for(int y = 0; y < NUMBER_OF_YEARS; ++y)
+                    {
+                        if(show_years[y])
+                        {
+                            day_buffer.Add(MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position);
+                        }
+                    }
+                    MovieObjs[mv].drawDateLines(movie_colors[mv], line_material, m, day_buffer);
+                }
+            }
+        }
+
     }
 
     public String printInfo()

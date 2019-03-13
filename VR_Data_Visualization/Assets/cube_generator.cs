@@ -10,10 +10,11 @@ public class cube_generator : MonoBehaviour
     public GameObject Pcube;
     // Start is called before the first frame update
 
-    public static float INNER_RADIUS = 20.0f; // 1 meter 
-    public static float INCREASE = 0.00078f * 4;
+    public static float INNER_RADIUS = 20.0f; // 20 meter 
+    public static float INCREASE = 0.00078f * 2;
     public float current_radius = INNER_RADIUS;
     public DataManager dm; 
+    static Material lineMaterial;
 
     
     void Start()
@@ -46,36 +47,43 @@ public class cube_generator : MonoBehaviour
         file.Close();
         
         MetaData md = dm.getData(3,2012,2,29);
-        Debug.Log("md.check_out_times = "+md.check_out_times);
+        Debug.Log("md.check_out_times = " + md.check_out_times);
 
 
         dm.drawData();
+        // dm.drawDate();
 
         //Test Boxes
         Color c = new Color(0.75f,0.75f,0.75f);
 
+        // for(int mv = 0; mv < 12; ++mv){
         // for(int y = 0; y < 14; ++y){
         //     for(int m = 0; m < 12; ++m){
-        //         for(int d = 0; d < dm.MovieObjs[8].year_objects[y].MonthObjs[m].dayList.Count; ++d){
-        //             Pcube = generate_cube(dm.MovieObjs[8].year_objects[y].MonthObjs[m].dayList[d].data.position, c);
+        //         for(int d = 0; d < dm.MovieObjs[mv].years[y].MonthObjs[m].dayList.Count; ++d){
+        //             Pcube = generate_cube(dm.MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position, c);
         //         }
         //     }
         // }
+        // }
 
         c = new Color(1,0,0);
-        Pcube = generate_cube(new Vector3(0,0,0), c);
-        Pcube = generate_cube(new Vector3(0,2,0), c);
-        Pcube = generate_cube(new Vector3(0,1,0), c);
-        Pcube = generate_cube(new Vector3(0,0,1), c);
-        Pcube = generate_cube(new Vector3(1,0,0), c);
-        Pcube = generate_cube(new Vector3(-1,0,0), c);
-        Pcube = generate_cube(new Vector3(0,0,-1), c);
+        // Pcube = generate_cube(new Vector3(0,0,0), c);
+        // Pcube = generate_cube(new Vector3(0,2,0), c);
+        // Pcube = generate_cube(new Vector3(0,1,0), c);
+        // Pcube = generate_cube(new Vector3(0,0,1), c);
+        // Pcube = generate_cube(new Vector3(1,0,0), c);
+        // Pcube = generate_cube(new Vector3(-1,0,0), c);
+        // Pcube = generate_cube(new Vector3(0,0,-1), c);
         Debug.Log("Current radius: " + current_radius);
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        /*************************************************
+            key board control
+        **************************************************/
         if (Input.GetKeyDown(KeyCode.Space))
         {
             for(int mv = 0; mv < 12; ++mv)
@@ -83,9 +91,10 @@ public class cube_generator : MonoBehaviour
                 dm.show_movies[mv] = !dm.show_movies[mv]; 
             }
         }
+
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            dm.show_years[2] = !dm.show_years[2]; 
+            dm.show_years[0] = !dm.show_years[0]; 
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha9))
@@ -94,8 +103,22 @@ public class cube_generator : MonoBehaviour
         }
 
 
+        // dm.drawDate();
 
-        // movie, year, month level show/hide control
+
+
+
+        for(int mv = 0; mv < 12; ++mv)
+        {
+            for(int m = 0 ; m < 12; ++m){
+                dm.MovieObjs[mv].date_lines_month[m].SetActive(dm.show_months[m]);
+            }
+        }
+
+
+        /*************************************************
+            movie, year, month level show/hide control
+        **************************************************/
 
         for(int mv = 0; mv < 12; ++mv)
         {
@@ -117,6 +140,7 @@ public class cube_generator : MonoBehaviour
                         }
                     }
                 }
+
                 // ;
                 //because the last year has nothing to connect with, the last year doesn't have a connector;
                 //thus, only the first 13 years needed to be checked
@@ -133,6 +157,9 @@ public class cube_generator : MonoBehaviour
         }
 
         
+        /*************************************************
+            ray cast control
+        **************************************************/
         
         if (Input.GetMouseButtonDown(0))
         {
@@ -152,12 +179,77 @@ public class cube_generator : MonoBehaviour
         }
     
     }
+
+
+    //    static Material lineMaterial;
+   static void CreateLineMaterial()
+   {
+       if (!lineMaterial)
+       {
+           // Unity has a built-in shader that is useful for drawing
+           // simple colored things.
+           Shader shader = Shader.Find("Hidden/Internal-Colored");
+           lineMaterial = new Material(shader);
+           lineMaterial.hideFlags = HideFlags.HideAndDontSave;
+           // Turn on alpha blending
+           lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+           lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+           // Turn backface culling off
+           lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+           // Turn off depth writes
+           lineMaterial.SetInt("_ZWrite", 0);
+       }
+   }
+
+
+    // Will be called after all regular rendering is done
+    public void OnRenderObject()
+    {
+        CreateLineMaterial();
+        // Apply the line material
+        lineMaterial.SetPass(0);
+
+
+        // Draw lines
+        for(int mv = 0; mv < 12; ++mv){
+            if(dm.show_movies[mv])
+            {
+                for (int m = 0; m < 12; ++m)
+                {
+                    if(dm.show_months[m])
+                    {
+                        for(int d = 0; d < dm.DAYS_IN_MONTH[m]; ++d)
+                        {
+                            GL.PushMatrix();
+                            // Set transformation matrix for drawing to
+                            // match our transform
+                            // GL.MultMatrix(transform.localToWorldMatrix);
+                            GL.Begin(GL.LINE_STRIP);
+                            GL.Color(dm.movie_colors[mv]);
+                            for (int y = 0; y < 14; ++y)
+                            {
+                                if(dm.show_years[y])
+                                {
+                                    GL.Vertex3(dm.MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position.x,
+                                            dm. MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position.y,
+                                            dm.MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position.z);
+                                }
+                            }
+                            GL.End();
+                            GL.PopMatrix();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
   
     public GameObject generate_cube(Vector3 pos, Color color)
     {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
-        cube.transform.localScale = new Vector3(0.12f,0.12f,0.12f);
+        cube.transform.localScale = new Vector3(0.01f,0.01f,0.01f);
         cube.transform.position = pos;
         cube.GetComponent<Collider>().isTrigger = true;
         cube.GetComponent<Renderer>().material.color = color;

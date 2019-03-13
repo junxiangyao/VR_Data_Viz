@@ -1,4 +1,5 @@
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+// Source: https://gist.github.com/unitycoder/469118783af9d2fd0e2b36becc7dd347
 
 Shader "Custom/Standard2Sided"
 {

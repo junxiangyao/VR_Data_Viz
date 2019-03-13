@@ -13,7 +13,7 @@ public class Month
     public MetaData data; // containing monthly data
     public int day_count; // number of the days in month
     public GameObject month_data_line;  // main graphic
-    public GameObject connection_to_next;     
+    public GameObject connection_to_next;   
     public float LINE_WIDTH = 0.005f;        
     // Constructor that takes no arguments:
     public Month()
