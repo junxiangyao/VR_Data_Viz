@@ -10,11 +10,11 @@ public class Year
 {
     public int year; // record the year
     public GameObject year_game_object; // parent of all the monthly graphics
-    public Month[] MonthObjs;
+    public Month[] months;
     // Constructor that takes no arguments:
     public Year()
     {
-        MonthObjs = new Month[12];
+        months = new Month[12];
     }
 
     // Constructor that takes one argument:
@@ -22,7 +22,7 @@ public class Year
     {
         this.year = year;
         this.year_game_object = new GameObject();
-        MonthObjs = new Month[12];
+        months = new Month[12];
     }
 
 
@@ -33,7 +33,7 @@ public class Year
 
         for(int i = 0 ; i  < 12; i++)
         {
-            sb.Append("MonthObjs["+i+"] = "+MonthObjs[i].printInfo()+"\n");
+            sb.Append("months["+i+"] = "+ months[i].printInfo()+"\n");
         }
         return sb.ToString();
     }

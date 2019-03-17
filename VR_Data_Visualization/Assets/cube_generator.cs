@@ -10,8 +10,8 @@ public class cube_generator : MonoBehaviour
     public GameObject Pcube;
     // Start is called before the first frame update
 
-    public static float INNER_RADIUS = 20.0f; // 20 meter 
-    public static float INCREASE = 0.00078f * 2;
+    public static float INNER_RADIUS = 30.0f; // 20 meter 
+    public static float INCREASE = 0.00078f * 3;
     public float current_radius = INNER_RADIUS;
     public DataManager dm; 
     static Material lineMaterial;
@@ -59,8 +59,8 @@ public class cube_generator : MonoBehaviour
         // for(int mv = 0; mv < 12; ++mv){
         // for(int y = 0; y < 14; ++y){
         //     for(int m = 0; m < 12; ++m){
-        //         for(int d = 0; d < dm.MovieObjs[mv].years[y].MonthObjs[m].dayList.Count; ++d){
-        //             Pcube = generate_cube(dm.MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position, c);
+        //         for(int d = 0; d < dm.MovieObjs[mv].years[y].months[m].dayList.Count; ++d){
+        //             Pcube = generate_cube(dm.MovieObjs[mv].years[y].months[m].dayList[d].data.position, c);
         //         }
         //     }
         // }
@@ -80,10 +80,19 @@ public class cube_generator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         /*************************************************
             key board control
         **************************************************/
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            dm.show_date_lines = !dm.show_date_lines;
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            dm.show_wall = !dm.show_wall;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             for(int mv = 0; mv < 12; ++mv)
@@ -91,15 +100,33 @@ public class cube_generator : MonoBehaviour
                 dm.show_movies[mv] = !dm.show_movies[mv]; 
             }
         }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            dm.show_movies[0] = !dm.show_movies[0]; 
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            dm.show_movies[1] = !dm.show_movies[1]; 
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            dm.show_movies[2] = !dm.show_movies[2]; 
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             dm.show_years[0] = !dm.show_years[0]; 
+            dm.show_years[4] = !dm.show_years[4]; 
+            dm.show_years[7] = !dm.show_years[7]; 
+            dm.show_years[11] = !dm.show_years[11]; 
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             dm.show_months[0] = !dm.show_months[0]; 
+            dm.show_months[3] = !dm.show_months[3]; 
+            dm.show_months[8] = !dm.show_months[8];     
         }
 
 
@@ -122,21 +149,32 @@ public class cube_generator : MonoBehaviour
 
         for(int mv = 0; mv < 12; ++mv)
         {
+            // show/ hide movie
             dm.MovieObjs[mv].game_object.SetActive(dm.show_movies[mv]); 
             for(int y = 0; y < 14; ++y)
             {
+                // show / hide year
                 dm.MovieObjs[mv].years[y].year_game_object.SetActive(dm.show_years[y]); 
                 for(int m = 0; m < 12; ++m)
                 {
-                    dm.MovieObjs[mv].years[y].MonthObjs[m].month_data_line.SetActive(dm.show_months[m]);  // main graphic
+                    // show / hide month
+                    dm.MovieObjs[mv].years[y].months[m].month_data_line.SetActive(dm.show_months[m]);  // main graphic
+                    dm.MovieObjs[mv].years[y].months[m].month_data_wall.SetActive(dm.show_months[m]&&dm.show_wall);
                     if(m < 11)
                     {
                         // if next month won't be drawn
                         if(!dm.show_months[m+1])
                         {
-                            dm.MovieObjs[mv].years[y].MonthObjs[m].connection_to_next.SetActive(dm.show_months[m+1]);
+                            dm.MovieObjs[mv].years[y].months[m].connection_to_next.SetActive(dm.show_months[m+1]);
+                            dm.MovieObjs[mv].years[y].months[m].connection_to_next_wall.SetActive(dm.show_months[m+1]);
                         }else{
-                            dm.MovieObjs[mv].years[y].MonthObjs[m].connection_to_next.SetActive(dm.show_months[m]);
+                            dm.MovieObjs[mv].years[y].months[m].connection_to_next.SetActive(dm.show_months[m]);
+                            if(dm.show_months[m] && dm.show_wall)
+                            {
+                                dm.MovieObjs[mv].years[y].months[m].connection_to_next_wall.SetActive(true);
+                            }else{
+                                dm.MovieObjs[mv].years[y].months[m].connection_to_next_wall.SetActive(false);
+                            }
                         }
                     }
                 }
@@ -148,9 +186,11 @@ public class cube_generator : MonoBehaviour
                     //if next year is not shown, hide the connector. connector is the line connecting the end of this year and the start of next year.
                     // or if January is not shown in the scene, hide Decemembers connector.
                     if(!dm.show_years[y+1] || !dm.show_months[0]){
-                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(false); 
+                        dm.MovieObjs[mv].years[y].months[11].connection_to_next.SetActive(false); 
+                        dm.MovieObjs[mv].years[y].months[11].connection_to_next_wall.SetActive(false); 
                     }else{
-                        dm.MovieObjs[mv].years[y].MonthObjs[11].connection_to_next.SetActive(dm.show_months[11]); 
+                        dm.MovieObjs[mv].years[y].months[11].connection_to_next.SetActive(dm.show_months[11]);
+                        dm.MovieObjs[mv].years[y].months[11].connection_to_next_wall.SetActive(dm.show_wall);  
                     }
                 }
            }
@@ -209,38 +249,40 @@ public class cube_generator : MonoBehaviour
         // Apply the line material
         lineMaterial.SetPass(0);
 
-
-        // Draw lines
-        for(int mv = 0; mv < 12; ++mv){
-            if(dm.show_movies[mv])
-            {
-                for (int m = 0; m < 12; ++m)
+        if(dm.show_date_lines){
+             // Draw lines
+            for(int mv = 0; mv < 12; ++mv){
+                if(dm.show_movies[mv])
                 {
-                    if(dm.show_months[m])
+                    for (int m = 0; m < 12; ++m)
                     {
-                        for(int d = 0; d < dm.DAYS_IN_MONTH[m]; ++d)
+                        if(dm.show_months[m])
                         {
-                            GL.PushMatrix();
-                            // Set transformation matrix for drawing to
-                            // match our transform
-                            // GL.MultMatrix(transform.localToWorldMatrix);
-                            GL.Begin(GL.LINE_STRIP);
-                            GL.Color(dm.movie_colors[mv]);
-                            for (int y = 0; y < 14; ++y)
+                            for(int d = 0; d < dm.DAYS_IN_MONTH[m]; ++d)
                             {
-                                if(dm.show_years[y])
+                                GL.PushMatrix();
+                                // Set transformation matrix for drawing to
+                                // match our transform
+                                // GL.MultMatrix(transform.localToWorldMatrix);
+                                GL.Begin(GL.LINE_STRIP);
+                                GL.Color(dm.movie_colors[mv]);
+                                for (int y = 0; y < 14; ++y)
                                 {
-                                    GL.Vertex3(dm.MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position.x,
-                                            dm. MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position.y,
-                                            dm.MovieObjs[mv].years[y].MonthObjs[m].dayList[d].data.position.z);
+                                    if(dm.show_years[y])
+                                    {
+                                        GL.Vertex3(dm.MovieObjs[mv].years[y].months[m].dayList[d].data.position.x,
+                                                dm. MovieObjs[mv].years[y].months[m].dayList[d].data.position.y,
+                                                dm.MovieObjs[mv].years[y].months[m].dayList[d].data.position.z);
+                                    }
                                 }
+                                GL.End();
+                                GL.PopMatrix();
                             }
-                            GL.End();
-                            GL.PopMatrix();
                         }
                     }
                 }
             }
+
         }
     }
 

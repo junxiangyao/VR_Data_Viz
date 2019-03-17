@@ -49,7 +49,7 @@ public class MeshTest : MonoBehaviour
         // material.SetFloat("_Mode", 3f);
         StandardShaderUtils.ChangeRenderMode(material, StandardShaderUtils.BlendMode.Transparent);
         material.color =  new Color(1,0,0,0.1f);
-        Debug.Log("!");
+        // Debug.Log("!");
         gameObject.GetComponent<MeshFilter>().mesh = mesh;
         gameObject.GetComponent<MeshRenderer>().material = material;
 
