@@ -16,10 +16,20 @@ public class cube_generator : MonoBehaviour
     public DataManager dm; 
     static Material lineMaterial;
 
+    public GameObject player;
+ 
+// void Start(){
+// //Find object
+// a = GameObject.Find("a");
+// //Get script from it
+// aScript = a.GetComponent<aObjectScript>();
+// }
+
     
     void Start()
     {
-
+        player = GameObject.FindGameObjectWithTag("Player");
+        // Debug.Log(player);
 
         int counter = 0;  
         string line;  
@@ -56,6 +66,7 @@ public class cube_generator : MonoBehaviour
         //Test Boxes
         Color c = new Color(0.75f,0.75f,0.75f);
 
+
         // for(int mv = 0; mv < 12; ++mv){
         // for(int y = 0; y < 14; ++y){
         //     for(int m = 0; m < 12; ++m){
@@ -67,6 +78,7 @@ public class cube_generator : MonoBehaviour
         // }
 
         c = new Color(1,0,0);
+        Pcube = generate_cube(player.transform.position, c);
         // Pcube = generate_cube(new Vector3(0,0,0), c);
         // Pcube = generate_cube(new Vector3(0,2,0), c);
         // Pcube = generate_cube(new Vector3(0,1,0), c);
@@ -80,6 +92,10 @@ public class cube_generator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Pcube.transform.localPosition = new Vector3(player.transform.position.x, 0.0f, player.transform.position.z);
+
+        Debug.Log(Pcube.transform.position);
+        // Pcube.transform.Translate(new Vector3(-1 * player.transform.position.x, 0, player.transform.position.z * -1),Space.World);
         /*************************************************
             key board control
         **************************************************/
@@ -286,12 +302,16 @@ public class cube_generator : MonoBehaviour
         }
     }
 
+    // void OnGUI(){
+    //     // Pcube = generate_cube(player.transform.position, new Color(1,0,0));
+    //     // GUI.Box(new Rect(player.transform.position.x, player.transform.position.y, player.transform.position.z),"Year");
+    // }
   
     public GameObject generate_cube(Vector3 pos, Color color)
     {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
-        cube.transform.localScale = new Vector3(0.01f,0.01f,0.01f);
+        cube.transform.localScale = new Vector3(0.1f,0.1f,0.1f);
         cube.transform.position = pos;
         cube.GetComponent<Collider>().isTrigger = true;
         cube.GetComponent<Renderer>().material.color = color;
