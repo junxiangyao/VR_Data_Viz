@@ -13,9 +13,9 @@ public class Day
     }
 
     // Constructor that takes arguments:
-    public Day(int check_out_times, Vector3 position)
+    public Day(int check_out_times, Vector3 position, float radius, float angle)
     {
-        this.data = new MetaData(check_out_times, position);
+        this.data = new MetaData(check_out_times, position, radius, angle);
     }
 
 

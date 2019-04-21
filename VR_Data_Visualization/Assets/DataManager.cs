@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 
 using static Movie;
+using static Coordinate;
 
 public class DataManager
 {
@@ -18,6 +19,8 @@ public class DataManager
     public static float color_converter = 1.0f/255;
     public static int NUMBER_OF_MOVIES = 12;
     public static int NUMBER_OF_YEARS = 14;
+
+    public GameObject mini_object;
 
 
 
@@ -40,7 +43,7 @@ public class DataManager
       new Color(163 * 1.0f/255, 37 * 1.0f/255, 235 * 1.0f/255), 
 
 
-      new Color(255,255,255), 
+      new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255), 
 
       new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255)
 
@@ -57,36 +60,39 @@ public class DataManager
     // Constructor that takes no arguments:
     public DataManager()
     {
-        startYear = 2005;
-        startMonth = 1;
-        MovieObjs = new Movie[NUMBER_OF_MOVIES];
+        this.startYear = 2005;
+        this.startMonth = 1;
+        this.MovieObjs = new Movie[NUMBER_OF_MOVIES];
+
+        this.mini_object = new GameObject();
+
         for(int i = 0; i < NUMBER_OF_MOVIES; ++i)
         {
-            show_movies[i] = true;
+            this.show_movies[i] = true;
         }
-        show_movies[10] = false;
-        show_movies[11] = false;
+        // show_movies[10] = false;
+        this.show_movies[11] = false;
         for(int i = 0; i < NUMBER_OF_YEARS; ++i)
         {
-            show_years[i] = true;
+            this.show_years[i] = true;
         }
         for(int i = 0; i < 12; ++i)
         {
-            show_months[i] = true;
+            this.show_months[i] = true;
         }
         for(int mv = 0 ; mv < MovieObjs.Length;mv++)
         {
-            MovieObjs[mv] = new Movie(NUMBER_OF_YEARS); 
+            this.MovieObjs[mv] = new Movie(NUMBER_OF_YEARS); 
             for(int y = 0 ; y<MovieObjs[mv].years.Length;y++)
             {
-                MovieObjs[mv].years[y] = new Year(startYear+y);
+                this.MovieObjs[mv].years[y] = new Year(startYear+y);
                 for(int m = 0; m < 12; m++)
                 {
                     if((y == 3 || y == 7 || y == 11)&& m == 1){
                         //leap year
-                        MovieObjs[mv].years[y].months[m] = new Month(1+m, 29);
+                        this.MovieObjs[mv].years[y].months[m] = new Month(1+m, 29);
                     }else{
-                        MovieObjs[mv].years[y].months[m] = new Month(1+m, DAYS_IN_MONTH[m]);
+                        this.MovieObjs[mv].years[y].months[m] = new Month(1+m, DAYS_IN_MONTH[m]);
                     }
 
                     //for(int d = 0 ; d<5; d++)
@@ -108,11 +114,11 @@ public class DataManager
         // current_radius = 3.0f;
         float point_height =  (float)check_out_times / 16.0f;
         if(mv == 10 || mv == 11){
-            point_height /= 3.0f; 
+            point_height /= 2.5f; 
         }
 
         // float point_height =  (float)check_out_times  * 1.7f/8;
-        // if(mv == 8 || mv == 11){
+        // if(mv == 10 || mv == 11){
         //     point_height /= 3.0f; 
         // }
         position = new Vector3(current_radius * Mathf.Sin(Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6), 
@@ -120,7 +126,9 @@ public class DataManager
         current_radius * Mathf.Cos(Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6));
   
         // day hasn't been implemented yet. considering add a day_count and month buffer in the main script.
-        MovieObjs[mv].years[y-startYear].months[m-startMonth].addDay(new Day(check_out_times,position));
+        MovieObjs[mv].years[y-startYear].months[m-startMonth].addDay(new Day(check_out_times,position,current_radius, 
+            // Mathf.PI));
+            Mathf.PI / (6 * DAYS_IN_MONTH[m-startMonth]) * (d-1) + (m-startMonth) * Mathf.PI / 6));
     }
 
     public MetaData getData(int mv, int y, int m, int d)
@@ -159,6 +167,11 @@ public class DataManager
 
                 MovieObjs[mv].years[y].year_game_object.transform.SetParent(MovieObjs[mv].game_object.transform, true);
             }
+
+            for(int m = 0; m < 12; ++m){
+                    //date lines set parent to movie objs
+                
+            }
         }
     }
 
@@ -168,26 +181,96 @@ public class DataManager
         for(int mv = 0; mv < NUMBER_OF_MOVIES; ++mv)
         // for(int mv = 0; mv < 1; ++mv)
         {
-            if(mv==8||mv==11){continue;}
+            // if(mv==10||mv==11){continue;}
+            int counter = 0;
             for(int m = 0; m < 12; ++m)
             {
-                MovieObjs[mv].date_lines_month[m] = new GameObject();
+                // MovieObjs[mv].date_lines_month[m] = new GameObject();
                 for(int d = 0; d < DAYS_IN_MONTH[m]; ++d)
                 {
                     List<Vector3> day_buffer = new List<Vector3>();
                     for(int y = 0; y < NUMBER_OF_YEARS; ++y)
                     {
-                        if(show_years[y])
-                        {
+                        // if(show_years[y])
+                        // {
                             day_buffer.Add(MovieObjs[mv].years[y].months[m].dayList[d].data.position);
-                        }
+                        // }
                     }
-                    MovieObjs[mv].drawDateLines(movie_colors[mv], line_material, m, day_buffer);
+                    MovieObjs[mv].drawDateLines(movie_colors[mv], line_material, m, day_buffer,counter);
+                    counter++;
                 }
+                MovieObjs[mv].date_lines_month[m].transform.SetParent(MovieObjs[mv].game_object.transform, true);
             }
         }
 
     }
+
+
+    public void drawDataMini()
+    {
+        for(int mv = 0; mv < 12; ++mv){
+            // draw main data line
+            if(mv==11||mv==10){continue;}
+            for(int y = 0; y < 14; ++y){
+                for(int m = 0; m < 12; ++m){
+                    //generate all the lines 
+                    MovieObjs[mv].years[y].months[m].drawDataMini(movie_colors[mv],line_material);
+                    // MovieObjs[mv].years[y].months[m].drawDataWallMini(movie_colors[mv]);
+                    //set parent
+                    MovieObjs[mv].years[y].months[m].mini_month_data_line.transform.SetParent(MovieObjs[mv].years[y].mini_year_game_object.transform, false);
+                    // MovieObjs[mv].years[y].months[m].month_data_wall.transform.SetParent(MovieObjs[mv].years[y].year_game_object.transform, true);
+                    //for the first 11 months, draw connectors that connect to next month
+                    if(m < 11){
+                        MovieObjs[mv].years[y].months[m].connectToNextMini(movie_colors[mv],line_material, MovieObjs[mv].years[y].months[m+1].dayList[0].data.mini_position);
+                        MovieObjs[mv].years[y].months[m].mini_connection_to_next.transform.SetParent(MovieObjs[mv].years[y].mini_year_game_object.transform, true);
+                        // MovieObjs[mv].years[y].months[m].connectWall(movie_colors[mv],MovieObjs[mv].years[y].months[m+1].dayList[0].data.position);
+                        // MovieObjs[mv].years[y].months[m].connection_to_next_wall.transform.SetParent(MovieObjs[mv].years[y].year_game_object.transform, true);
+                    }
+                }
+                if(y < 13){
+                    //for the last month, connect to next year
+                    MovieObjs[mv].years[y].months[11].connectToNextMini(movie_colors[mv],line_material, MovieObjs[mv].years[y+1].months[0].dayList[0].data.mini_position);
+                    MovieObjs[mv].years[y].months[11].mini_connection_to_next.transform.SetParent(MovieObjs[mv].years[y].mini_year_game_object.transform, true);
+                    // MovieObjs[mv].years[y].months[11].connectWall(movie_colors[mv],MovieObjs[mv].years[y+1].months[0].dayList[0].data.position);
+                    // MovieObjs[mv].years[y].months[11].connection_to_next_wall.transform.SetParent(MovieObjs[mv].years[y].year_game_object.transform, true);
+                }
+
+                MovieObjs[mv].years[y].mini_year_game_object.transform.SetParent(MovieObjs[mv].mini_game_object.transform, false);
+            }
+            MovieObjs[mv].mini_game_object.transform.SetParent(this.mini_object.transform, false);
+        }
+    }
+
+    public void drawDateMini()
+    {
+        for(int mv = 0; mv < NUMBER_OF_MOVIES; ++mv)
+        // for(int mv = 0; mv < 1; ++mv)
+        {
+            if(mv==10||mv==11){continue;}
+            int counter = 0;
+            for(int m = 0; m < 12; ++m)
+            {
+                // MovieObjs[mv].date_lines_month[m] = new GameObject();
+                for(int d = 0; d < DAYS_IN_MONTH[m]; ++d)
+                {
+                    List<Vector3> day_buffer = new List<Vector3>();
+                    for(int y = 0; y < NUMBER_OF_YEARS; ++y)
+                    {
+                        // if(show_years[y])
+                        // {
+                            day_buffer.Add(MovieObjs[mv].years[y].months[m].dayList[d].data.mini_position);
+                        // }
+                    }
+                    MovieObjs[mv].drawDateLinesMini(movie_colors[mv], line_material, m, day_buffer,counter);
+                    counter++;
+                }
+                MovieObjs[mv].mini_date_lines_month[m].transform.SetParent(MovieObjs[mv].mini_game_object.transform, true);
+            }
+        }
+
+    }
+
+
 
     public String printInfo()
     {

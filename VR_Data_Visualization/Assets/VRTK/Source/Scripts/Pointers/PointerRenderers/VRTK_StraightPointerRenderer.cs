@@ -35,7 +35,7 @@ namespace VRTK
         [Tooltip("The cursor will be rotated to match the angle of the target surface if this is true, if it is false then the pointer cursor will always be horizontal.")]
         public bool cursorMatchTargetRotation = false;
         [Tooltip("Rescale the cursor proportionally to the distance from the tracer origin.")]
-        public bool cursorDistanceRescale = false;
+        public bool cursorDistanceRescale = true;
         [Tooltip("The maximum scale the cursor is allowed to reach. This is only used when rescaling the cursor proportionally to the distance from the tracer origin.")]
         public Vector3 maximumCursorScale = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
 
@@ -156,6 +156,7 @@ namespace VRTK
             else
             {
                 actualCursor = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                // actualCursor.transform.localScale = Vector3.one;
                 actualCursor.transform.localScale = Vector3.one * (scaleFactor * cursorScaleMultiplier);
                 actualCursor.GetComponent<Collider>().isTrigger = true;
                 actualCursor.AddComponent<Rigidbody>().isKinematic = true;

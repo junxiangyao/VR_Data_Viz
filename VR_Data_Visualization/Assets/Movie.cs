@@ -10,37 +10,63 @@ public class Movie
 {
     public Year[] years;
     public GameObject game_object;
+    public GameObject mini_game_object;
     public GameObject[] date_lines_month;
-    public float LINE_WIDTH = 0.002f;  
-
+    public float LINE_WIDTH = 0.002f; 
+    public float LINE_WIDTH_MINI = 0.0001f; 
+    public GameObject[] date_lines_day;
+    public GameObject[] mini_date_lines_month;  
+    public GameObject[] mini_date_lines_day;
     // Constructor that takes no arguments:
     public Movie(int num)
     {
-        years = new Year[num];
-        game_object = new GameObject();
-        date_lines_month = new GameObject[12];
+        this.years = new Year[num];
+        this.game_object = new GameObject();
+        this.mini_game_object = new GameObject();
+        this.date_lines_month = new GameObject[12];
+        this.date_lines_day = new GameObject[365];
+        this.mini_date_lines_month = new GameObject[12];
+        this.mini_date_lines_day = new GameObject[365];
         for(int m = 0; m < 12; ++m){
-            date_lines_month[m] = new GameObject();
+            this.date_lines_month[m] = new GameObject();
+            this.mini_date_lines_month[m] = new GameObject();
+        }
+        for(int d = 0; d < 365; ++d){
+            this.date_lines_day[d] = new GameObject();
+            this.mini_date_lines_day[d] = new GameObject();
         }
     }
 
-    public void drawDateLines(Color c, Material material, int m, List<Vector3> nodes){
-        GameObject date_line_day = new GameObject();
-        LineRenderer line_renderer = date_line_day.AddComponent<LineRenderer>();
+    public void drawDateLines(Color c, Material material, int m, List<Vector3> nodes, int index){
+        LineRenderer line_renderer = date_lines_day[index].AddComponent<LineRenderer>();
         line_renderer.material = material;
         line_renderer.widthMultiplier = LINE_WIDTH;
         line_renderer.positionCount = nodes.Count;
         line_renderer.startColor = c;
         line_renderer.endColor = c;
-        date_line_day.transform.SetParent(date_lines_month[m].transform, true);
-        // line_renderer.SetPositions(nodes);
-
+        line_renderer.sortingOrder=1;
         for(int i = 0; i < nodes.Count; ++i){
             line_renderer.SetPosition(i, nodes[i]);
         }
-        Debug.Log(":" + line_renderer.positionCount);
+        // Debug.Log(":" + line_renderer.positionCount);
+        date_lines_day[index].transform.SetParent(date_lines_month[m].transform, true);
     }
 
+    public void drawDateLinesMini(Color c, Material material, int m, List<Vector3> nodes, int index){
+        LineRenderer line_renderer = mini_date_lines_day[index].AddComponent<LineRenderer>();
+        line_renderer.material = material;
+        line_renderer.widthMultiplier = LINE_WIDTH_MINI;
+        line_renderer.positionCount = nodes.Count;
+        line_renderer.useWorldSpace = false;
+        line_renderer.startColor = c;
+        line_renderer.endColor = c;
+        line_renderer.sortingOrder=1;
+        for(int i = 0; i < nodes.Count; ++i){
+            line_renderer.SetPosition(i, nodes[i]);
+        }
+        // Debug.Log(":" + line_renderer.positionCount);
+        mini_date_lines_day[index].transform.SetParent(mini_date_lines_month[m].transform, true);
+    }
     public String printInfo()
     {
         //buffer
@@ -52,5 +78,4 @@ public class Movie
         }
         return sb.ToString();
     }
-
 }

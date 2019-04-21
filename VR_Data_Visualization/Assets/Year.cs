@@ -10,6 +10,7 @@ public class Year
 {
     public int year; // record the year
     public GameObject year_game_object; // parent of all the monthly graphics
+    public GameObject mini_year_game_object; // for mini map
     public Month[] months;
     // Constructor that takes no arguments:
     public Year()
@@ -22,6 +23,7 @@ public class Year
     {
         this.year = year;
         this.year_game_object = new GameObject();
+        this.mini_year_game_object = new GameObject();
         months = new Month[12];
     }
 
