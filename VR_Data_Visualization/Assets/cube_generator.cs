@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using VRTK;
 
 using static DataManager;
+using static HoverManager;
 
 
 public class cube_generator : MonoBehaviour
@@ -29,6 +30,7 @@ public class cube_generator : MonoBehaviour
     *****************************************/
     
     // outside objects
+    public HoverManager hm;
     GameObject left_controller;
     GameObject right_controller;
     VRTK_Pointer pointer; // pointer from right hand
@@ -83,7 +85,8 @@ public class cube_generator : MonoBehaviour
 
     // string[] year_text;
 
-    
+    int YEAR_COUNT = 14;
+
 
 
     // Start is called before the first frame update
@@ -96,6 +99,7 @@ public class cube_generator : MonoBehaviour
         string line;  
 
         dm = new DataManager();
+        hm = new HoverManager(YEAR_COUNT);
 
         // Read the file and display it line by line.  
         System.IO.StreamReader file = new System.IO.StreamReader(@"Assets/sw.csv");  
@@ -116,6 +120,26 @@ public class cube_generator : MonoBehaviour
         }  
 
         file.Close();
+
+
+        for(int y = 0; y < YEAR_COUNT; ++y){
+            for(int m = 0; m < 12; ++m){
+                for(int d = 0; d < dm.MovieObjs[0].years[y].months[m].dayList.Count; ++d){
+                    // hm.years[y].months[m].addDay(new HoverDay());
+                    hm.years[y].months[m].addDay(new HoverDay(dm.MovieObjs[0].years[y].months[m].dayList[d].data.position));
+                    for(int i = 0; i < 10; ++i){
+                        // if(dm.MovieObjs[i].years[y].months[m].dayList[d].data.check_out_times > 0){
+                            hm.years[y].months[m].day_list[d].addMovie(dm.movie_colors[i], 
+                            dm.MovieObjs[i].years[y].months[m].dayList[d].data.check_out_times,
+                            i,
+                            dm.MovieObjs[i].years[y].months[m].dayList[d].data.position);
+                        // }
+                    }
+                    hm.years[y].months[m].day_list[d].drawHoverObjs();
+                    hm.years[y].months[m].day_list[d].daily_hover_obj.SetActive(false);
+                }
+            }
+        }
         
         MetaData md = dm.getData(3,2012,2,29);
         Debug.Log("md.check_out_times = " + md.check_out_times);
@@ -348,7 +372,7 @@ public class cube_generator : MonoBehaviour
     void Update()
     {
         local_date.SetActive(false);
-        Debug.Log("base:"+base_world.transform.position);
+        // Debug.Log("base:"+base_world.transform.position);
         int current_year = 0;
         int current_month = 0;
         int current_day = 0;
@@ -382,7 +406,7 @@ public class cube_generator : MonoBehaviour
                     }
                 }
             }
-            for(int i = 0; i < dm.MovieObjs[0].years[current_year-2005].months[current_month-1].day_count - 2; ++i)
+            for(int i = 0; i < dm.MovieObjs[0].years[current_year-2005].months[current_month-1].day_count - 1; ++i)
             {
                 if(real_polar_angle >= dm.getData(0,current_year,current_month,i + 1).angle_radians * Mathf.Rad2Deg && 
                 real_polar_angle < dm.getData(0,current_year,current_month,i + 2).angle_radians * Mathf.Rad2Deg)
@@ -394,6 +418,7 @@ public class cube_generator : MonoBehaviour
                 }
             }
             local_date_text.GetComponent<Text>().text = month_text[current_month-1] + " " + current_day + " " + current_year; 
+            hm.unmute(current_year, current_month, current_day);
         }
 
 
@@ -499,7 +524,7 @@ public class cube_generator : MonoBehaviour
                         }
 
 
-                        for(int i = 0; i < dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count - 2; ++i)
+                        for(int i = 0; i < dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count - 1; ++i)
                         {
                             if(pos_polar_angle >= dm.getData(0,hover_year,hover_month,i + 1).angle_radians * Mathf.Rad2Deg && 
                                 pos_polar_angle < dm.getData(0,hover_year,hover_month,i + 2).angle_radians * Mathf.Rad2Deg)
@@ -565,6 +590,18 @@ public class cube_generator : MonoBehaviour
             dm.show_movies[2] = !dm.show_movies[2]; 
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            dm.show_movies[3] = !dm.show_movies[3]; 
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            dm.show_movies[4] = !dm.show_movies[4]; 
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            dm.show_movies[5] = !dm.show_movies[5]; 
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {

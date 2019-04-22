@@ -19,7 +19,7 @@ public class HoverObject
 		this.movie_index.Add(i);
 		this.check_out = record;
 		this.position = pos;
-		this.hover_obj.SetActive(false);
+		this.hover_obj.SetActive(true);
 	}
 
 	public void addMovie(int i){
@@ -31,7 +31,7 @@ public class HoverObject
 	public void drawCube(){
         hover_obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
-        hover_obj.transform.localScale = new Vector3(0.01f,0.01f,0.01f);
+        hover_obj.transform.localScale = new Vector3(0.02f,0.02f,0.02f);
         hover_obj.transform.position = position;
         // cube.GetComponent<Collider>().isTrigger = true;
         hover_obj.GetComponent<Renderer>().material.color = hover_color;

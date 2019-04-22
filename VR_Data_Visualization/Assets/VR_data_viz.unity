@@ -14482,7 +14482,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.01
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -23757,6 +23757,7 @@ GameObject:
   - component: {fileID: 1879096864}
   - component: {fileID: 1879096865}
   - component: {fileID: 1879096866}
+  - component: {fileID: 1879096867}
   m_Layer: 0
   m_Name: PlayArea
   m_TagString: Untagged
@@ -23821,6 +23822,25 @@ MonoBehaviour:
   checkType: 1
   identifiers:
   - ExcludeTeleport
+--- !u!114 &1879096867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1879096863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef7e6bfad51b1f24f8bba548c8dcecb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blinkToColor: {r: 0, g: 0, b: 0, a: 1}
+  blinkTransitionSpeed: 0.6
+  distanceBlinkDelay: 0.001
+  headsetPositionCompensation: 1
+  targetListPolicy: {fileID: 0}
+  navMeshData: {fileID: 0}
+  navMeshLimitDistance: 0
 --- !u!1 &1880932083
 GameObject:
   m_ObjectHideFlags: 0

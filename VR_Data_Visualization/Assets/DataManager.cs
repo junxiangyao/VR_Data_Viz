@@ -142,6 +142,25 @@ public class DataManager
             // draw main data line
             // if(mv==11||mv==10){continue;}
             for(int y = 0; y < 14; ++y){
+
+            // optimization
+                if(mv == 6){
+                    if(y < 9){
+                        continue;
+                    }
+                }else if(mv == 7){
+                    if(y < 11){
+                        continue;
+                    }
+                }else if(mv == 8){
+                    if(y < 10){
+                        continue;
+                    }
+                }else if(mv == 9){
+                    if(y < 12){
+                        continue;
+                    }
+                } 
                 for(int m = 0; m < 12; ++m){
                     //generate all the lines 
                     MovieObjs[mv].years[y].months[m].drawData(movie_colors[mv],line_material);
@@ -193,7 +212,27 @@ public class DataManager
                     {
                         // if(show_years[y])
                         // {
-                            day_buffer.Add(MovieObjs[mv].years[y].months[m].dayList[d].data.position);
+
+                        //optimization
+                        if(mv == 6){
+                            if(y < 9){
+                                continue;
+                            }
+                        }else if(mv == 7){
+                            if(y < 11){
+                                continue;
+                            }
+                        }else if(mv == 8){
+                            if(y < 10){
+                                continue;
+                            }
+                        }else if(mv == 9){
+                            if(y < 12){
+                                continue;
+                            }
+                        }
+
+                        day_buffer.Add(MovieObjs[mv].years[y].months[m].dayList[d].data.position);
                         // }
                     }
                     MovieObjs[mv].drawDateLines(movie_colors[mv], line_material, m, day_buffer,counter);
@@ -208,10 +247,29 @@ public class DataManager
 
     public void drawDataMini()
     {
-        for(int mv = 0; mv < 12; ++mv){
+        for(int mv = 0; mv < 12; ++mv){           
             // draw main data line
             if(mv==11||mv==10){continue;}
             for(int y = 0; y < 14; ++y){
+            // optimization
+                if(mv == 6){
+                    if(y < 9){
+                        continue;
+                    }
+                }else if(mv == 7){
+                    if(y < 11){
+                        continue;
+                    }
+                }else if(mv == 8){
+                    if(y < 10){
+                        continue;
+                    }
+                }else if(mv == 9){
+                    if(y < 12){
+                        continue;
+                    }
+                } 
+
                 for(int m = 0; m < 12; ++m){
                     //generate all the lines 
                     MovieObjs[mv].years[y].months[m].drawDataMini(movie_colors[mv],line_material);
@@ -256,8 +314,24 @@ public class DataManager
                     List<Vector3> day_buffer = new List<Vector3>();
                     for(int y = 0; y < NUMBER_OF_YEARS; ++y)
                     {
-                        // if(show_years[y])
-                        // {
+                        // optimization
+                        if(mv == 6){
+                            if(y < 9){
+                                continue;
+                            }
+                        }else if(mv == 7){
+                            if(y < 11){
+                                continue;
+                            }
+                        }else if(mv == 8){
+                            if(y < 10){
+                                continue;
+                            }
+                        }else if(mv == 9){
+                            if(y < 12){
+                                continue;
+                            }
+                        }
                             day_buffer.Add(MovieObjs[mv].years[y].months[m].dayList[d].data.mini_position);
                         // }
                     }
