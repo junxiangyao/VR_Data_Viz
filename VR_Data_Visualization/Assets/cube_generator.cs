@@ -138,6 +138,7 @@ public class cube_generator : MonoBehaviour
                     hm.years[y].months[m].day_list[d].drawHoverObjs();
                     hm.years[y].months[m].day_list[d].daily_hover_obj.SetActive(false);
                 }
+                hm.years[y].months[m].set_parent();
             }
         }
         
@@ -366,6 +367,7 @@ public class cube_generator : MonoBehaviour
         // Debug.Log("2006/2 angle:"+ dm.getData(0,2006,5,1).angle_radians * Mathf.Rad2Deg);
         // Debug.Log("2006/2 angle:"+ dm.getData(0,2006,8,1).angle_radians * Mathf.Rad2Deg);
         // Debug.Log("2006/2 angle:"+ dm.getData(0,2006,11,1).angle_radians * Mathf.Rad2Deg);
+
     }
 
     // Update is called once per frame
@@ -419,140 +421,47 @@ public class cube_generator : MonoBehaviour
             }
             local_date_text.GetComponent<Text>().text = month_text[current_month-1] + " " + current_day + " " + current_year; 
             hm.unmute(current_year, current_month, current_day);
-        }
 
+            // controlling
+            // for(int y = 0; y < 14; ++y){
+            //     hm.years[y].year_obj.SetActive(dm.show_years[y]);
+            //     for(int m = 0; m < 12; ++m){
+            //         hm.years[y].months[m].month_hover_obj.SetActive(dm.show_months[m]);
+            //         if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active
+            //             for(int d = 0; d < hm.years[y].months[m].day_list.Count; ++d){
+            //                 for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
+            //                     if(hm.years[y].months[m].day_list[d].data_list[dt].movie_count == 1){
+            //                         hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[0]]);
+            //                     }
 
+            //                     if(hm.years[y].months[m].day_list[d].data_list[dt].movie_count > 1){
+            //                         for(int i = 0; i < hm.years[y].months[m].day_list[d].data_list[dt].movie_count; ++i){
+            //                             if(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[i]] == true){
+            //                                 hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter++;  
+            //                                 hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.GetComponent<Renderer>().material.color = 
+            //                                 dm.movie_colors[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[i]];         
+            //                             }
+            //                         }
+            //                         if(hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter == 1){
+            //                             hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(true);
+            //                         }else if(hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter == 0){
+            //                             hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(false);
+            //                         }else{
+            //                             hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(true);
+            //                             hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.GetComponent<Renderer>().material.color = 
+            //                                 hm.years[y].months[m].day_list[d].data_list[dt].hover_color; 
+            //                         }
+            //                         // hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[0]]);
+            //                     }
+            //                 }
 
-
-
-        // Debug.Log(dm.MovieObjs[0].years[0].months[0].mini_month_data_line.transform.position);
-
-        /*************************************************
-            menu updates
-        *************************************************/
-        color_buffer = b.colors;
-        if(dm.show_date_lines){
-            color_buffer.normalColor = Color.green;
-        }else{
-            color_buffer.normalColor = Color.red;
-        };
-        b.colors = color_buffer;
-
-
-        /*************************************************
-            mini map updates
-        *************************************************/
-        // dm.mini_object.transform.SetParent(mini_map.transform, true);
-        label_mini_pointer.SetActive(false);
-        // the location of player marker on the mini map will reflect player's location in the world coordinate.
-        // player_marker.transform.localPosition = new Vector3(player_world.transform.position.x/60f,
-        //     5f,
-        //     player_world.transform.position.z/60f);        
-        player_marker.transform.localPosition = new Vector3(base_world.transform.position.x/60f,
-            5f,
-            base_world.transform.position.z/60f);
-
-        // mini map rotation
-        if (left_controller.GetComponent<VRTK_ControllerEvents>().gripPressed)
-        {
-            yRotation += 5.0f;
-            // transform.eulerAngles = new Vector3(0, yRotation, 0);
-            mini_map.transform.localRotation = Quaternion.Euler(0, yRotation, 0);
-        }
-
-        // Debug.Log(player_world.transform.position);
-
-        /*************************************************
-            pointer controls
-        *************************************************/
-        if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerTouched)
-        {
-            RaycastHit hit = pointer.pointerRenderer.GetDestinationHit();
-            // if(hit.transform.gameObject.CompareTag("MiniMap"))
-            // if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map)||
-            //         GameObject.ReferenceEquals(hit.transform.gameObject, mini_map_out))
-            if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
-            {
-                hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(hit.point);
-                label_mini_pointer.transform.localPosition = new Vector3(hit_point.transform.position.x, 0.2f ,hit_point.transform.position.z);
-                // hit_point.transform.position = left_controller.transform.InverseTransformPoint(hit.point); // this line basically does the same thing as the line above
-                hit_point.transform.position = Quaternion.Euler(0, -yRotation, 0) * hit_point.transform.position; // rotate back to get the correct hit point on the map
-                // Debug.Log("x" + hit_point.transform.position.x);  
-                // Debug.Log("y" + hit_point.transform.position.y);  
-                // Debug.Log("z" + hit_point.transform.position.z);  
-                dist_mini = Vector3.Distance(new Vector3(0,0.03f,0), hit_point.transform.position);
-                // Debug.Log(dist_mini);
-
-                if(dist_mini <= 0.145f) // if hit in the legit area
-                {     
-
-                    int hover_year = 0;
-                    int hover_month = 0;
-                    int hover_day = 0;
-                    if(dist_mini >= dm.getData(0,2018,1,1).hit_radius && dist_mini <= dm.getData(0,2018,12,31).hit_radius)
-                    {
-                        hover_year = 2018;
-                        // Debug.Log(2018);
-                    }else{
-                        for(int i = 0; i < 13; ++i){
-                            if(dist_mini >= dm.getData(0,2005 + i,1,1).hit_radius && dist_mini < dm.getData(0,2005 + i + 1,1,1).hit_radius)
-                            {
-                                hover_year = 2005 + i;
-                                // Debug.Log(2005+i);
-                                break;
-                            }
-                        }
-                    }
-
-                    pos_polar_angle = Mathf.Atan2(hit_point.transform.position.x, hit_point.transform.position.z) * Mathf.Rad2Deg;
-                    if(pos_polar_angle < 0){pos_polar_angle += 360;}
-                    // Debug.Log("angle: " + pos_polar_angle);
-                    if(hover_year != 0){
-                        if(pos_polar_angle >= dm.getData(0,hover_year,12,1).angle_radians * Mathf.Rad2Deg)
-                        {
-                            hover_month = 12;
-                            // Debug.Log(2018);
-                        }else{
-                            for(int i = 0; i < 11; ++i){
-                                if(pos_polar_angle >= dm.getData(0,hover_year,i+1,1).angle_radians * Mathf.Rad2Deg && pos_polar_angle < dm.getData(0,hover_year,i+2,1).angle_radians * Mathf.Rad2Deg)
-                                {
-                                    hover_month = i+1;
-                                    // Debug.Log(2005+i);
-                                    break;
-                                }
-                            }
-                        }
-
-
-                        for(int i = 0; i < dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count - 1; ++i)
-                        {
-                            if(pos_polar_angle >= dm.getData(0,hover_year,hover_month,i + 1).angle_radians * Mathf.Rad2Deg && 
-                                pos_polar_angle < dm.getData(0,hover_year,hover_month,i + 2).angle_radians * Mathf.Rad2Deg)
-                            {
-                                hover_day = i+1;
-                                // Debug.Log(2005+i);
-                                break;
-                            }else{
-                                hover_day = dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count;
-                            }
-                        }
-                        Debug.Log("year: " + hover_year + "month: " + hover_month + "day: " + hover_day);
-                        label_mini_pointer_text.GetComponent<Text>().text = month_text[hover_month-1] + " " + hover_day +". " + hover_year; 
-                        label_mini_pointer.SetActive(true); 
-                    }
-
-
-
-                    // Debug.Log("!!!!!!"+dist_mini);
-                    if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
-                    {
-                        teleporter.ForceTeleport(new Vector3(hit_point.transform.position.x * 333f * 0.6f, 0, hit_point.transform.position.z * 333f * 0.6f),Quaternion.Euler(new Vector3(0, 0, 0)));
-                        // teleporter.ForceTeleport(new Vector3(30, 0, 0),Quaternion.Euler(new Vector3(0, 0, 0)));
-                    }
-                }
-            }else{
-                // label_mini_pointer.SetActive(false);
-            }
+            //             // for(int mv = 0; mv < 10; ++mv){
+            //             //     
+            //             // }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
 
@@ -694,6 +603,183 @@ public class cube_generator : MonoBehaviour
            }
         }
 
+        if(current_year != 0){
+            for(int y = 0; y < 14; ++y){
+                hm.years[y].year_obj.SetActive(dm.show_years[y]);
+                for(int m = 0; m < 12; ++m){
+                    hm.years[y].months[m].month_hover_obj.SetActive(dm.show_months[m]);
+                    if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active
+                        for(int d = 0; d < hm.years[y].months[m].day_list.Count; ++d){
+                            for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
+                                if(hm.years[y].months[m].day_list[d].data_list[dt].movie_count == 1){
+                                    hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[0]]);
+                                }
+                                // sharing points
+                                else if(hm.years[y].months[m].day_list[d].data_list[dt].movie_count > 1){
+                                    for(int i = 0; i < hm.years[y].months[m].day_list[d].data_list[dt].movie_count; ++i){
+                                        if(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[i]] == true){
+                                            hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter++;  
+                                            hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.GetComponent<Renderer>().material.color = 
+                                            dm.movie_colors[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[i]];         
+                                        }
+                                    }
+                                    if(hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter == 1){
+                                        hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(true);
+                                    }else if(hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter == 0){
+                                        hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(false);
+                                    }else{
+                                        hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(true);
+                                        hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.GetComponent<Renderer>().material.color = 
+                                            hm.years[y].months[m].day_list[d].data_list[dt].hover_color; 
+                                    }
+                                    // hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[0]]);
+                                }
+
+
+
+                                hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter = 0;
+                            }
+
+                        // for(int mv = 0; mv < 10; ++mv){
+                        //     
+                        // }
+                        }
+                    }
+                }
+            }
+            Debug.Log(hm.years[0].months[11].day_list[27].data_list[0].sharing_counter);
+        }
+
+
+                // Debug.Log(dm.MovieObjs[0].years[0].months[0].mini_month_data_line.transform.position);
+
+        /*************************************************
+            menu updates
+        *************************************************/
+        color_buffer = b.colors;
+        if(dm.show_date_lines){
+            color_buffer.normalColor = Color.green;
+        }else{
+            color_buffer.normalColor = Color.red;
+        };
+        b.colors = color_buffer;
+
+
+        /*************************************************
+            mini map updates
+        *************************************************/
+        // dm.mini_object.transform.SetParent(mini_map.transform, true);
+        label_mini_pointer.SetActive(false);
+        // the location of player marker on the mini map will reflect player's location in the world coordinate.
+        // player_marker.transform.localPosition = new Vector3(player_world.transform.position.x/60f,
+        //     5f,
+        //     player_world.transform.position.z/60f);        
+        player_marker.transform.localPosition = new Vector3(base_world.transform.position.x/60f,
+            5f,
+            base_world.transform.position.z/60f);
+
+        // mini map rotation
+        if (left_controller.GetComponent<VRTK_ControllerEvents>().gripPressed)
+        {
+            yRotation += 5.0f;
+            // transform.eulerAngles = new Vector3(0, yRotation, 0);
+            mini_map.transform.localRotation = Quaternion.Euler(0, yRotation, 0);
+        }
+
+        // Debug.Log(player_world.transform.position);
+
+        /*************************************************
+            pointer controls
+        *************************************************/
+        if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerTouched)
+        {
+            RaycastHit hit = pointer.pointerRenderer.GetDestinationHit();
+            // if(hit.transform.gameObject.CompareTag("MiniMap"))
+            // if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map)||
+            //         GameObject.ReferenceEquals(hit.transform.gameObject, mini_map_out))
+            if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
+            {
+                hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(hit.point);
+                label_mini_pointer.transform.localPosition = new Vector3(hit_point.transform.position.x, 0.2f ,hit_point.transform.position.z);
+                // hit_point.transform.position = left_controller.transform.InverseTransformPoint(hit.point); // this line basically does the same thing as the line above
+                hit_point.transform.position = Quaternion.Euler(0, -yRotation, 0) * hit_point.transform.position; // rotate back to get the correct hit point on the map
+                // Debug.Log("x" + hit_point.transform.position.x);  
+                // Debug.Log("y" + hit_point.transform.position.y);  
+                // Debug.Log("z" + hit_point.transform.position.z);  
+                dist_mini = Vector3.Distance(new Vector3(0,0.03f,0), hit_point.transform.position);
+                // Debug.Log(dist_mini);
+
+                if(dist_mini <= 0.145f) // if hit in the legit area
+                {     
+
+                    int hover_year = 0;
+                    int hover_month = 0;
+                    int hover_day = 0;
+                    if(dist_mini >= dm.getData(0,2018,1,1).hit_radius && dist_mini <= dm.getData(0,2018,12,31).hit_radius)
+                    {
+                        hover_year = 2018;
+                        // Debug.Log(2018);
+                    }else{
+                        for(int i = 0; i < 13; ++i){
+                            if(dist_mini >= dm.getData(0,2005 + i,1,1).hit_radius && dist_mini < dm.getData(0,2005 + i + 1,1,1).hit_radius)
+                            {
+                                hover_year = 2005 + i;
+                                // Debug.Log(2005+i);
+                                break;
+                            }
+                        }
+                    }
+
+                    pos_polar_angle = Mathf.Atan2(hit_point.transform.position.x, hit_point.transform.position.z) * Mathf.Rad2Deg;
+                    if(pos_polar_angle < 0){pos_polar_angle += 360;}
+                    // Debug.Log("angle: " + pos_polar_angle);
+                    if(hover_year != 0){
+                        if(pos_polar_angle >= dm.getData(0,hover_year,12,1).angle_radians * Mathf.Rad2Deg)
+                        {
+                            hover_month = 12;
+                            // Debug.Log(2018);
+                        }else{
+                            for(int i = 0; i < 11; ++i){
+                                if(pos_polar_angle >= dm.getData(0,hover_year,i+1,1).angle_radians * Mathf.Rad2Deg && pos_polar_angle < dm.getData(0,hover_year,i+2,1).angle_radians * Mathf.Rad2Deg)
+                                {
+                                    hover_month = i+1;
+                                    // Debug.Log(2005+i);
+                                    break;
+                                }
+                            }
+                        }
+
+
+                        for(int i = 0; i < dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count - 1; ++i)
+                        {
+                            if(pos_polar_angle >= dm.getData(0,hover_year,hover_month,i + 1).angle_radians * Mathf.Rad2Deg && 
+                                pos_polar_angle < dm.getData(0,hover_year,hover_month,i + 2).angle_radians * Mathf.Rad2Deg)
+                            {
+                                hover_day = i+1;
+                                // Debug.Log(2005+i);
+                                break;
+                            }else{
+                                hover_day = dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count;
+                            }
+                        }
+                        Debug.Log("year: " + hover_year + "month: " + hover_month + "day: " + hover_day);
+                        label_mini_pointer_text.GetComponent<Text>().text = month_text[hover_month-1] + " " + hover_day +". " + hover_year; 
+                        label_mini_pointer.SetActive(true); 
+                    }
+
+
+
+                    // Debug.Log("!!!!!!"+dist_mini);
+                    if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+                    {
+                        teleporter.ForceTeleport(new Vector3(hit_point.transform.position.x * 333f * 0.6f, 0, hit_point.transform.position.z * 333f * 0.6f),Quaternion.Euler(new Vector3(0, 0, 0)));
+                        // teleporter.ForceTeleport(new Vector3(30, 0, 0),Quaternion.Euler(new Vector3(0, 0, 0)));
+                    }
+                }
+            }else{
+                // label_mini_pointer.SetActive(false);
+            }
+        }
         
         // /*************************************************
         //     ray cast control

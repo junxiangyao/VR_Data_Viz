@@ -10,6 +10,7 @@ public class HoverObject
 	public List<int> movie_index;
 	public int check_out;
 	public Vector3 position;
+	public int sharing_counter = 0; // how many movies that is active in the scene are sharing this object
 
 	public HoverObject(Color c, int i, int record, Vector3 pos){
 		this.hover_obj = new GameObject();
@@ -31,7 +32,7 @@ public class HoverObject
 	public void drawCube(){
         hover_obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
-        hover_obj.transform.localScale = new Vector3(0.02f,0.02f,0.02f);
+        hover_obj.transform.localScale = new Vector3(0.06f,0.06f,0.06f);
         hover_obj.transform.position = position;
         // cube.GetComponent<Collider>().isTrigger = true;
         hover_obj.GetComponent<Renderer>().material.color = hover_color;
