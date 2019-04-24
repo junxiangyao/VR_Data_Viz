@@ -356,8 +356,18 @@ public class cube_generator : MonoBehaviour
         label_mini_pointer_line = new GameObject();
         label_mini_pointer_line = generate_line(new Vector3(0,0.1f,0), new Vector3(0,0.285f,0), Color.black);
         label_mini_pointer_line.transform.SetParent(label_mini_pointer.transform);
-        
-
+            
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().c_out);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().index[0]);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().c_out);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().index[0]);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[2].hover_obj.GetComponent<InfoCube>().c_out);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[2].hover_obj.GetComponent<InfoCube>().index[0]);        
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[3].hover_obj.GetComponent<InfoCube>().c_out);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[3].hover_obj.GetComponent<InfoCube>().index[0]);        
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().c_out);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().index[1]);
+        // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().index[2]);
         // Debug.Log("45:"+Mathf.Atan2(1, 1) * Mathf.Rad2Deg);
         // Debug.Log("135:"+Mathf.Atan2(1, -1) * Mathf.Rad2Deg);
         // Debug.Log("225:"+Mathf.Atan2(-1, -1) * Mathf.Rad2Deg);
@@ -647,7 +657,7 @@ public class cube_generator : MonoBehaviour
                     }
                 }
             }
-            Debug.Log(hm.years[0].months[11].day_list[27].data_list[0].sharing_counter);
+            // Debug.Log(hm.years[0].months[11].day_list[27].data_list[0].sharing_counter);
         }
 
 
@@ -697,6 +707,7 @@ public class cube_generator : MonoBehaviour
             // if(hit.transform.gameObject.CompareTag("MiniMap"))
             // if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map)||
             //         GameObject.ReferenceEquals(hit.transform.gameObject, mini_map_out))
+            Debug.Log(hit.transform.gameObject);
             if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
             {
                 hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(hit.point);

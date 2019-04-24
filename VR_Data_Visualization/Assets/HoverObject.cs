@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static InfoCube;
 
 public class HoverObject
 {
@@ -11,6 +12,7 @@ public class HoverObject
 	public int check_out;
 	public Vector3 position;
 	public int sharing_counter = 0; // how many movies that is active in the scene are sharing this object
+	public InfoCube ic;
 
 	public HoverObject(Color c, int i, int record, Vector3 pos){
 		this.hover_obj = new GameObject();
@@ -21,6 +23,8 @@ public class HoverObject
 		this.check_out = record;
 		this.position = pos;
 		this.hover_obj.SetActive(true);
+		this.ic = new InfoCube();
+
 	}
 
 	public void addMovie(int i){
@@ -31,6 +35,10 @@ public class HoverObject
 
 	public void drawCube(){
         hover_obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        hover_obj.AddComponent<InfoCube>();
+        hover_obj.GetComponent<InfoCube>().c_out = check_out;
+        hover_obj.GetComponent<InfoCube>().index = movie_index;
+
         // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
         hover_obj.transform.localScale = new Vector3(0.06f,0.06f,0.06f);
         hover_obj.transform.position = position;

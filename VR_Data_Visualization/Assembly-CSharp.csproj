@@ -81,6 +81,7 @@
      <Compile Include="Assets\HoverMonth.cs" />
      <Compile Include="Assets\HoverObject.cs" />
      <Compile Include="Assets\HoverYear.cs" />
+     <Compile Include="Assets\InfoCube.cs" />
      <Compile Include="Assets\Lines.cs" />
      <Compile Include="Assets\MeshTest.cs" />
      <Compile Include="Assets\MetaData.cs" />
