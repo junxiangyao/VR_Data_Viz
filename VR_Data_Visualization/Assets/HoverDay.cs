@@ -24,7 +24,7 @@ public class HoverDay : MonoBehaviour
         // this.news = new HoverObject();
     }
 
-    public void addMovie(Color c, int checkOut, int movie_index, Vector3 pos)
+    public void addMovie(Color c, int checkOut, int movie_index, Vector3 pos, int y_, int m_, int d_)
     {
     	bool is_new = true;
     	if(checkOut > 0){
@@ -40,7 +40,7 @@ public class HoverDay : MonoBehaviour
 	        }
 
 	        if(is_new){
-	        	data_list.Add(new HoverObject(c, movie_index, checkOut, pos));
+	        	data_list.Add(new HoverObject(c, movie_index, checkOut, pos, y_, m_, d_, data_list.Count));
 	        }
     	}
     }
@@ -50,6 +50,7 @@ public class HoverDay : MonoBehaviour
     		for(int i = 0; i < data_list.Count; ++i){
     			data_list[i].drawCube();
     			data_list[i].hover_obj.transform.SetParent(daily_hover_obj.transform);
+    			// data_list[i].hover_obj.tag = "data_node";
     		}
     	}
     }

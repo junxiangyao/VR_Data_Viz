@@ -28,8 +28,9 @@ public class cube_generator : MonoBehaviour
     /****************************************
         UI 
     *****************************************/
-    
-    // outside objects
+    ////////////////////////////////
+    // world objects
+    ////////////////////////////////
     public HoverManager hm;
     GameObject left_controller;
     GameObject right_controller;
@@ -54,7 +55,14 @@ public class cube_generator : MonoBehaviour
     float real_polar_angle;
     
 
+    GameObject hover_label_movie;
+    GameObject hover_label_movie_num;
+    GameObject hover_label_movie_date;
+    GameObject hover_label_movie_name;
+    GameObject hover_label_news;
+    /////////////////////////////
     // mini map
+    /////////////////////////////
     GameObject mini_map;
     GameObject mini_map_out;
     GameObject player_marker; // marker on the mini map
@@ -66,27 +74,34 @@ public class cube_generator : MonoBehaviour
     GameObject hit_point; // the point hit by pointer
     Coordinate mini_coordinate;
 
-    // UI menu & buttons
-    GameObject canvas_for_movies;
-    Button b;
-    ColorBlock color_buffer;
-
     GameObject canvas_label_mini;
     // GameObject canvas_label_pointer;
 
     GameObject [] month_label_mini;
     GameObject [] year_label_mini;
     string [] month_text = {"Jan.","Feb.","Mar.","Apr.","May.","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."};
+    string [] title_short = {"Star Wars I", "Star Wars II", "Star Wars III", "Star Wars IV", "Star Wars V",
+    "Star Wars VI", "Star Wars VII", "Star Wars VIII", "Rogue One", "Solo"};   
+    string [] title_full = {"The Phantom Menace", "Attack of the Clones", "Revenge of the Sith", "A New Hope", "The Empire Strikes Back",
+    "Return of the Jedi", "The Force Awakens", "The Last Jedi", "Rogue One", "Solo"};
 
     GameObject label_mini_pointer;
     GameObject label_mini_pointer_text;
     GameObject label_mini_pointer_line;
 
 
+
+
+
     // string[] year_text;
 
     int YEAR_COUNT = 14;
-
+    ////////////////////////////////////
+    // UI menu & buttons
+    ////////////////////////////////////
+    GameObject canvas_for_movies;
+    Button b;
+    ColorBlock color_buffer;
 
 
     // Start is called before the first frame update
@@ -94,6 +109,9 @@ public class cube_generator : MonoBehaviour
     {
         /****************************************
             Loading data and draw main graphics
+
+
+
         *****************************************/
         int counter = 0;  
         string line;  
@@ -121,7 +139,7 @@ public class cube_generator : MonoBehaviour
 
         file.Close();
 
-
+        int pcounter = 0;
         for(int y = 0; y < YEAR_COUNT; ++y){
             for(int m = 0; m < 12; ++m){
                 for(int d = 0; d < dm.MovieObjs[0].years[y].months[m].dayList.Count; ++d){
@@ -132,8 +150,14 @@ public class cube_generator : MonoBehaviour
                             hm.years[y].months[m].day_list[d].addMovie(dm.movie_colors[i], 
                             dm.MovieObjs[i].years[y].months[m].dayList[d].data.check_out_times,
                             i,
-                            dm.MovieObjs[i].years[y].months[m].dayList[d].data.position);
+                            dm.MovieObjs[i].years[y].months[m].dayList[d].data.position,
+                            y,m,d);
                         // }
+                    }
+                    for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
+                        if(pcounter < hm.years[y].months[m].day_list[d].data_list[dt].movie_count){
+                            pcounter = hm.years[y].months[m].day_list[d].data_list[dt].movie_count;
+                        }
                     }
                     hm.years[y].months[m].day_list[d].drawHoverObjs();
                     hm.years[y].months[m].day_list[d].daily_hover_obj.SetActive(false);
@@ -142,6 +166,7 @@ public class cube_generator : MonoBehaviour
             }
         }
         
+
         MetaData md = dm.getData(3,2012,2,29);
         Debug.Log("md.check_out_times = " + md.check_out_times);
 
@@ -164,6 +189,8 @@ public class cube_generator : MonoBehaviour
 
         /****************************************
             UI initialization
+
+
         *****************************************/
 
         Font arial;
@@ -180,7 +207,7 @@ public class cube_generator : MonoBehaviour
         base_world = GameObject.Find("[VRTK_SDKSetups]").transform.GetChild(3).GetChild(1).GetChild(0).gameObject;
         teleporter = play_area.GetComponent<VRTK_BasicTeleport>(); 
         year_circles = new GameObject[15];
-
+        //-----------------------------------------circles-------------------------------------
         for(int i = 0; i < 15; ++i){
             if(i == 14){
                 year_circles[i] = generate_circle(current_radius + INCREASE, 400, new Color(180 * 1.0f/255, 180 * 1.0f/255, 180 * 1.0f/255));
@@ -188,19 +215,52 @@ public class cube_generator : MonoBehaviour
                 year_circles[i] = generate_circle(dm.getData(0,2005 + i,1,1).radius, 100 + i * 20, new Color(180 * 1.0f/255, 180 * 1.0f/255, 180 * 1.0f/255));       
             }
         }
-
+        //------------------------------------------ lables on the floor --------------------------------------
         label_node_data = new GameObject();
         label_node_news = new GameObject();
 
         year_this = GameObject.Find("ThisYear");
-        // year_this.AddComponent<TextMesh>();
         year_next = GameObject.Find("NextYear");
-        // year_next.AddComponent<TextMesh>();
         local_date = GameObject.Find("CurrentDate");
-        year_this_text = new GameObject();
-        year_next_text = new GameObject();
-        local_date_text = new GameObject();
 
+        year_this_text = new GameObject();
+        year_this_text.AddComponent<Text>();
+        year_this_text.GetComponent<Text>().text = "2000";        
+        year_this_text.GetComponent<Text>().font = arial;
+        year_this_text.GetComponent<Text>().fontSize = 32;
+        year_this_text.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        year_this_text.GetComponent<Text>().color = Color.white;
+        year_this_text.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+        year_this_text.transform.SetParent(year_this.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_this;
+        rectTransform_this = year_this_text.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_this.localPosition = new Vector3(0,0f,-0.01f);
+        rectTransform_this.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_this.sizeDelta = new Vector2(160,100);
+        year_this_text.transform.eulerAngles = new Vector3(90, 0, 0);
+
+
+
+        year_next_text = new GameObject();
+        year_next_text.AddComponent<Text>();
+        year_next_text.GetComponent<Text>().text = "2001";        
+        year_next_text.GetComponent<Text>().font = arial;
+        year_next_text.GetComponent<Text>().fontSize = 32;
+        year_next_text.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        year_next_text.GetComponent<Text>().color = Color.white;
+        year_next_text.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+        year_next_text.transform.SetParent(year_next.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_next;
+        rectTransform_next = year_next_text.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_next.localPosition = new Vector3(0,0f,-0.01f);
+        rectTransform_next.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_next.sizeDelta = new Vector2(160,100);
+        year_next_text.transform.eulerAngles = new Vector3(90, 0, 0);
+
+
+        local_date_text = new GameObject();
         local_date_text.AddComponent<Text>();
         local_date_text.GetComponent<Text>().text = "Jan.31";        
         local_date_text.GetComponent<Text>().font = arial;
@@ -213,26 +273,64 @@ public class cube_generator : MonoBehaviour
         RectTransform rectTransform_local;
         rectTransform_local = local_date_text.GetComponent<Text>().GetComponent<RectTransform>();
         rectTransform_local.localPosition = new Vector3(0,0.5f,-0.01f);
-        // rectTransform.localScale = new Vector3(0.002f,0.002f,1f);
         rectTransform_local.transform.localScale = new Vector3(0.01f,0.01f,0.01f);
         rectTransform_local.sizeDelta = new Vector2(160,100);
         local_date_text.transform.eulerAngles = new Vector3(90, 0, 0);
         local_date.transform.SetParent(base_world.transform);
 
+        //--------------------------------------------------------pointer hovering-----------------------------------------------
+        hover_label_movie = GameObject.Find("HoverLabelMovie");
+        hover_label_movie_num = new GameObject();
+        hover_label_movie_num.AddComponent<Text>();
+        hover_label_movie_num.GetComponent<Text>().text = "0";        
+        hover_label_movie_num.GetComponent<Text>().font = arial;
+        hover_label_movie_num.GetComponent<Text>().fontSize = 32;
+        hover_label_movie_num.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        hover_label_movie_num.GetComponent<Text>().color = Color.white;
+        hover_label_movie_num.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+        hover_label_movie_num.transform.SetParent(hover_label_movie.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_num;
+        rectTransform_num = hover_label_movie_num.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_num.localPosition = new Vector3(-0.1f,0f,-0.01f);
+        rectTransform_num.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_num.sizeDelta = new Vector2(160,100);
+ 
+        hover_label_movie_date = new GameObject();
+        hover_label_movie_date.AddComponent<Text>();
+        hover_label_movie_date.GetComponent<Text>().text = "Jan.31.2005";        
+        hover_label_movie_date.GetComponent<Text>().font = arial;
+        hover_label_movie_date.GetComponent<Text>().fontSize = 12;
+        hover_label_movie_date.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        hover_label_movie_date.GetComponent<Text>().color = Color.white;
+        hover_label_movie_date.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+        hover_label_movie_date.transform.SetParent(hover_label_movie.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_date;
+        rectTransform_date = hover_label_movie_date.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_date.localPosition = new Vector3(0.14f,0.1f,-0.01f);
+        rectTransform_date.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_date.sizeDelta = new Vector2(160,100);
 
-        // local_date.AddComponent<TextMesh>();
-        // // local_date.transform.SetParent(player_world.transform);
-        // local_date.GetComponent<TextMesh>().text = "Jan.31";
-        // local_date.GetComponent<TextMesh>().font = arial;
-        // local_date.GetComponent<TextMesh>().fontSize = 14;
-        // local_date.GetComponent<TextMesh>().fontStyle = FontStyle.Normal;
-        // local_date.GetComponent<TextMesh>().color = Color.white;
-        // local_date.GetComponent<TextMesh>().alignment = TextAlignment.Center;
-        // local_date.transform.localPosition = new Vector3(0,0,1f);
-        // local_date.transform.localScale = new Vector3(0.1f,0.1f,0.1f);
-        // local_date.transform.localRotation = Quaternion.Euler(90, 0, 0);
-        // // local_date.GetComponent<Renderer>().material = new Material(Shader.Find("GUI/3DTextShader"));
-        // Debug.Log("???"+local_date.GetComponent<Renderer>().material);
+
+        hover_label_movie_name = new GameObject();
+        hover_label_movie_name.AddComponent<Text>();
+        hover_label_movie_name.GetComponent<Text>().text = "Star Wars VIII";        
+        hover_label_movie_name.GetComponent<Text>().font = arial;
+        hover_label_movie_name.GetComponent<Text>().fontSize = 16;
+        hover_label_movie_name.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        hover_label_movie_name.GetComponent<Text>().color = Color.black;
+        hover_label_movie_name.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
+        hover_label_movie_name.transform.SetParent(hover_label_movie.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_name;
+        rectTransform_name = hover_label_movie_name.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_name.localPosition = new Vector3(1.204f,0f,-0.01f);
+        rectTransform_name.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_name.sizeDelta = new Vector2(600,100);
+
+
+        // hover_label_news = GameObject.Find("HoverLabelNews");
 
         ///////////////////////////////////////
         // mini map
@@ -252,27 +350,27 @@ public class cube_generator : MonoBehaviour
         mini_map_out.transform.localPosition = new Vector3(0,0.0f,0);
         Destroy(mini_map_out.GetComponent<CapsuleCollider>());
 
-        // graphics on mini map
+        //--------------------------------------------- graphics on mini map ----------------------------------------
         dm.drawDateMini();
         dm.drawDataMini();
         dm.mini_object.transform.localPosition = new Vector3(0,1f,0);
         dm.mini_object.transform.SetParent(mini_map.transform, false);
 
-        // marker on mini map
+        //---------------------------------------------- marker on mini map ------------------------------------------
         player_marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
         player_marker.transform.localScale = new Vector3(0.004f,0.1f,0.004f);
         player_marker.transform.SetParent(mini_map.transform);
         player_marker.transform.localPosition = new Vector3(0,5f,0); // impacted by the scaling of its parent
         hit_point = new GameObject();
 
-        // menus and buttons
+        //------------------------------------------------ menus and buttons ------------------------------------------
         canvas_for_movies = GameObject.Find("Canvas");
         canvas_for_movies.transform.SetParent(left_controller.transform, true);
         b = canvas_for_movies.transform.GetChild(1).gameObject.GetComponent<Button>();
         b.onClick.AddListener(CustomButton_onClick);
         color_buffer = new ColorBlock();
 
-        // labels
+        //--------------------------------------------------- labels -------------------------------------------------------
         canvas_label_mini = GameObject.Find("LabelMini");
         canvas_label_mini.GetComponent<Collider>().isTrigger = true;
         canvas_label_mini.transform.SetParent(mini_map.transform, false);
@@ -368,6 +466,7 @@ public class cube_generator : MonoBehaviour
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().c_out);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().index[1]);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().index[2]);
+        // Debug.Log("C:"+pcounter);
         // Debug.Log("45:"+Mathf.Atan2(1, 1) * Mathf.Rad2Deg);
         // Debug.Log("135:"+Mathf.Atan2(1, -1) * Mathf.Rad2Deg);
         // Debug.Log("225:"+Mathf.Atan2(-1, -1) * Mathf.Rad2Deg);
@@ -384,6 +483,8 @@ public class cube_generator : MonoBehaviour
     void Update()
     {
         local_date.SetActive(false);
+        year_this.SetActive(false);
+        year_next.SetActive(false);
         // Debug.Log("base:"+base_world.transform.position);
         int current_year = 0;
         int current_month = 0;
@@ -429,7 +530,21 @@ public class cube_generator : MonoBehaviour
                     current_day = dm.MovieObjs[0].years[current_year-2005].months[current_month-1].day_count;
                 }
             }
-            local_date_text.GetComponent<Text>().text = month_text[current_month-1] + " " + current_day + " " + current_year; 
+            local_date_text.GetComponent<Text>().text = month_text[current_month-1] + " " + current_day + " " + current_year;
+            year_this.SetActive(true);
+            year_this_text.GetComponent<Text>().text = "" + current_year;
+            year_this.transform.localPosition = new Vector3(dm.getData(0,current_year,1,1).radius * Mathf.Sin(dm.getData(0,current_year,current_month,current_day).angle_radians),
+                0.01f,
+                dm.getData(0,current_year,1,1).radius * Mathf.Cos(dm.getData(0,current_year,current_month,current_day).angle_radians));
+            year_this.transform.localRotation = Quaternion.Euler(90, dm.getData(0,current_year,current_month,current_day).angle_radians * Mathf.Rad2Deg, 0);
+            if(current_year != 2018){
+                year_next.SetActive(true);
+                year_next_text.GetComponent<Text>().text = "" + (current_year + 1);
+                year_next.transform.localPosition = new Vector3(dm.getData(0,current_year + 1,1,1).radius * Mathf.Sin(dm.getData(0,current_year + 1,current_month,current_day).angle_radians),
+                0.01f,
+                dm.getData(0,current_year + 1,1,1).radius * Mathf.Cos(dm.getData(0,current_year + 1,current_month,current_day).angle_radians));
+                year_next.transform.localRotation = Quaternion.Euler(90, dm.getData(0,current_year + 1,current_month,current_day).angle_radians * Mathf.Rad2Deg, 0);
+            } 
             hm.unmute(current_year, current_month, current_day);
 
             // controlling
@@ -618,7 +733,7 @@ public class cube_generator : MonoBehaviour
                 hm.years[y].year_obj.SetActive(dm.show_years[y]);
                 for(int m = 0; m < 12; ++m){
                     hm.years[y].months[m].month_hover_obj.SetActive(dm.show_months[m]);
-                    if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active
+                    if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active based on boolean in dm and it should be shown based on location
                         for(int d = 0; d < hm.years[y].months[m].day_list.Count; ++d){
                             for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
                                 if(hm.years[y].months[m].day_list[d].data_list[dt].movie_count == 1){
@@ -644,9 +759,6 @@ public class cube_generator : MonoBehaviour
                                     }
                                     // hm.years[y].months[m].day_list[d].data_list[dt].hover_obj.SetActive(dm.show_movies[hm.years[y].months[m].day_list[d].data_list[dt].movie_index[0]]);
                                 }
-
-
-
                                 hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter = 0;
                             }
 
@@ -696,7 +808,7 @@ public class cube_generator : MonoBehaviour
             mini_map.transform.localRotation = Quaternion.Euler(0, yRotation, 0);
         }
 
-        // Debug.Log(player_world.transform.position);
+        Debug.Log("RRR" + base_world.transform.rotation.eulerAngles.y);
 
         /*************************************************
             pointer controls
@@ -707,7 +819,62 @@ public class cube_generator : MonoBehaviour
             // if(hit.transform.gameObject.CompareTag("MiniMap"))
             // if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map)||
             //         GameObject.ReferenceEquals(hit.transform.gameObject, mini_map_out))
-            Debug.Log(hit.transform.gameObject);
+            // Debug.Log("+++" + hit.transform.gameObject);
+            if(hit.transform.gameObject.CompareTag("data_node")){
+                
+                hover_label_movie.transform.localPosition = new Vector3(
+                    hit.transform.gameObject.transform.position.x,
+                    hit.transform.gameObject.transform.position.y,
+                    hit.transform.gameObject.transform.position.z);
+                hover_label_movie.transform.localRotation = Quaternion.Euler(0, base_world.transform.rotation.eulerAngles.y, 0);
+                hover_label_movie.transform.localPosition = hover_label_movie.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
+                hover_label_movie.GetComponent<Image>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
+
+                hover_label_movie_num.GetComponent<Text>().text = "" +  hit.transform.gameObject.GetComponent<InfoCube>().c_out;
+                hover_label_movie_num.GetComponent<Text>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
+
+                hover_label_movie_date.GetComponent<Text>().text = month_text[hit.transform.gameObject.GetComponent<InfoCube>().mb] +
+                (hit.transform.gameObject.GetComponent<InfoCube>().db + 1) + "." + (hit.transform.gameObject.GetComponent<InfoCube>().yb+2005);
+                if(hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index.Count > 1){
+                    hover_label_movie_name.GetComponent<Text>().text = "";
+                    float extend_width = 0;
+                    for(int i = 0; i < hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index.Count; ++i){
+                        int multi_buffer = hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index[i];
+                        if(dm.show_movies[multi_buffer]){
+                            hover_label_movie_name.GetComponent<Text>().text += title_short[multi_buffer] + " ";
+                            if(multi_buffer < 8){
+                                extend_width += 0.34f + multi_buffer * 0.01f;
+                            }else if(multi_buffer == 8){
+                                extend_width += 0.36f;
+                            }else{
+                                extend_width += 0.3f;
+                            }
+                            hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(extend_width, 0.1f);
+                            hover_label_movie_num.GetComponent<RectTransform>().localPosition = new Vector3(-0.1f,0f,-0.01f);
+                            hover_label_movie_date.GetComponent<RectTransform>().localPosition = new Vector3(0.136f,0.1f,-0.01f);
+                            hover_label_movie_name.GetComponent<RectTransform>().localPosition = new Vector3(1.204f,0f,-0.01f);
+                        } 
+                    }
+                }else{
+                    int index_buffer = hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index[0]; 
+                    hover_label_movie_name.GetComponent<Text>().text = title_short[index_buffer];
+                    // hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(0.6f, 0.1f);
+                    if(index_buffer < 8){
+                        float bg_width = 0.34f + index_buffer * 0.01f;
+                        hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(bg_width, 0.1f);
+                    }else if(index_buffer ==8){
+                        hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(0.36f, 0.1f);
+                    }else{
+                        hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(0.3f, 0.1f);
+                    }
+                    hover_label_movie_num.GetComponent<RectTransform>().localPosition = new Vector3(-0.1f,0f,-0.01f);
+                    hover_label_movie_date.GetComponent<RectTransform>().localPosition = new Vector3(0.136f,0.1f,-0.01f);
+                    hover_label_movie_name.GetComponent<RectTransform>().localPosition = new Vector3(1.204f,0f,-0.01f);
+
+                }
+                
+                Debug.Log("!!!!!");
+            };
             if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
             {
                 hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(hit.point);
@@ -792,6 +959,22 @@ public class cube_generator : MonoBehaviour
             }
         }
         
+
+
+
+        if(current_year != 0){
+            for(int y = 0; y < 14; ++y){
+                for(int m = 0; m < 12; ++m){
+                    if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active based on boolean in dm and it should be shown based on location
+                        for(int d = 0; d < hm.years[y].months[m].day_list.Count; ++d){
+                            for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
+                                // hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // /*************************************************
         //     ray cast control
         // **************************************************/

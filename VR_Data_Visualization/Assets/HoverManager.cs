@@ -110,6 +110,10 @@ public class HoverManager
 					years[current_year - 2005 - 1].months[11].day_list[d].daily_hover_obj.SetActive(true);
 				}
 				years[12].months[11].should_draw = true;
+				for(int d = 0; d < years[current_year - 2005 - 1].months[11].day_list.Count; ++d){
+					years[current_year - 2005 - 1].months[11].day_list[d].daily_hover_obj.SetActive(true);
+				}
+				years[13].months[11].should_draw = true;
 			}else{
 				for(int d = 0; d < years[current_year - 2005].months[current_month - 1].day_list.Count; ++d){
 					years[current_year - 2005].months[current_month - 1].day_list[d].daily_hover_obj.SetActive(true);

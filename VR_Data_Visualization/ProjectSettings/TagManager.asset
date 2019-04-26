@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - UI
+  - MiniMap
+  - ControllerLeft
+  - ControllerRight
+  - Teleport
+  - 'Destination '
+  - data_node
   layers:
   - Default
   - TransparentFX
