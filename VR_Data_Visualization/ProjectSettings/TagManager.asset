@@ -11,6 +11,7 @@ TagManager:
   - Teleport
   - 'Destination '
   - data_node
+  - news_node
   layers:
   - Default
   - TransparentFX

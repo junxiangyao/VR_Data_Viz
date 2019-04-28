@@ -172,6 +172,22 @@ public class cube_generator : MonoBehaviour
 
         dm.drawDate();
         dm.drawData();
+
+        string line_sw;
+        System.IO.StreamReader file_news_sw = new System.IO.StreamReader(@"Assets/seattle_times_news_sw.csv");  
+        while((line_sw = file_news_sw.ReadLine()) != null)  
+        {  
+            
+            string[] splits_sw = line_sw.Split(new[] { ',' });
+            // Debug.Log("@@@" + splits_sw[3]);
+        }  
+        file_news_sw.Close();
+        // System.IO.StreamReader file_news_spl = new System.IO.StreamReader(@"Assets/seattle_times_news_spl.csv"); 
+        // while((line = file_news_spl.ReadLine()) != null)  
+        // {  
+        //     int[] splits = parseLine(line);
+        // }   
+        // file_news_spl.Close();
         //Test Boxes
         // Color c = new Color(0.75f,0.75f,0.75f);
         // for(int mv = 0; mv < 12; ++mv){
