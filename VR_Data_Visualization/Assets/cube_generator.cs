@@ -611,13 +611,14 @@ public class cube_generator : MonoBehaviour
 
 
 
-        if (left_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+        if (left_controller.GetComponent<VRTK_ControllerEvents>().gripPressed)
         {
             mini_map.SetActive(true);
             canvas_for_movies.SetActive(true);
         }else{
             mini_map.SetActive(false);
             canvas_for_movies.SetActive(false);
+            // yRotation = 0;
         }
         hoverable = false;
         if(right_controller.GetComponent<VRTK_ControllerEvents>().gripPressed){
@@ -951,7 +952,7 @@ public class cube_generator : MonoBehaviour
             base_world.transform.position.z/60f);
 
         // mini map rotation
-        if (left_controller.GetComponent<VRTK_ControllerEvents>().gripPressed)
+        if (left_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
         {
             yRotation += 5.0f;
             // transform.eulerAngles = new Vector3(0, yRotation, 0);

@@ -23,7 +23,7 @@ public class MetaData
     {
         this.check_out_times = check_out_times;
         this.position = position;
-        // this.position.y = position.y + 0.5f;
+        this.position.y = position.y + 1.0f;
         this.mini_position.x = position.x / 60f; //local to mini map
         this.mini_position.y = position.y * 1.6f;
         // this.mini_position.y = position.y / 10f -1f;
