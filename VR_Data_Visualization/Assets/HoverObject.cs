@@ -17,6 +17,8 @@ public class HoverObject
 	public int m;
 	public int d;
 	public int id;
+
+
 	public HoverObject(Color c, int i, int record, Vector3 pos, int y_, int m_, int d_, int id){
 		this.hover_obj = new GameObject();
 		this.hover_color = c;
@@ -26,7 +28,6 @@ public class HoverObject
 		this.check_out = record;
 		this.position = pos;
 		this.hover_obj.SetActive(true);
-		// this.ic = new InfoCube();
 		this.y = y_;
 		this.m = m_;
 		this.d = d_;
@@ -40,7 +41,7 @@ public class HoverObject
 	}
 
 	public void drawCube(){
-        hover_obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        hover_obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         hover_obj.AddComponent<InfoCube>();
         hover_obj.GetComponent<InfoCube>().c_out = check_out;
         hover_obj.GetComponent<InfoCube>().index = movie_index;        
@@ -56,27 +57,8 @@ public class HoverObject
 
         // cube.GetComponent<Collider>().isTrigger = true;
         hover_obj.GetComponent<Renderer>().material.color = hover_color;
-        hover_obj.GetComponent<Renderer>().material.color = hover_color;
+        // hover_obj.GetComponent<Renderer>().material.color = hover_color;
         
-	}
-
-	public void drawNews(){
-        hover_obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        hover_obj.AddComponent<InfoCube>();
-        hover_obj.GetComponent<InfoCube>().c_out = check_out;
-        // hover_obj.GetComponent<InfoCube>().index = movie_index;        
-        hover_obj.GetComponent<InfoCube>().yb = y;
-        hover_obj.GetComponent<InfoCube>().mb = m;
-        hover_obj.GetComponent<InfoCube>().db = d;
-        // hover_obj.GetComponent<InfoCube>().id = id;
-        hover_obj.tag = "news_node";
-        // hover_obj.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
-        hover_obj.transform.localScale = new Vector3(0.04f,0.04f,0.04f);
-        // hover_obj.transform.localScale = new Vector3(0.06f,0.06f,0.06f);
-        hover_obj.transform.position = position;
-
-        // cube.GetComponent<Collider>().isTrigger = true;
-        hover_obj.GetComponent<Renderer>().material.color = hover_color;
 	}
 
 }

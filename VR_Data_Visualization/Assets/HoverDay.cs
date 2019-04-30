@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static HoverObject;
+using static HoverNews;
 
 public class HoverDay : MonoBehaviour
 {
 	public Vector3 position;
 	public List<HoverObject> data_list;
-	public HoverObject news;
+	public HoverNews news;
 	public GameObject daily_hover_obj;
 
 	public HoverDay(Vector3 pos)
@@ -15,13 +16,28 @@ public class HoverDay : MonoBehaviour
     	this.position = new Vector3(pos.x, 0, pos.z);
         this.data_list = new List<HoverObject>();
         this.daily_hover_obj = new GameObject();
-        // this.news = new HoverObject();
+        // this.news = new HoverNews();
     }	
     public HoverDay()
     {
         this.data_list = new List<HoverObject>();
         this.daily_hover_obj = new GameObject();
-        // this.news = new HoverObject();
+    }
+
+    public void initNewsObj(Color c, int record, Vector3 pos, int y_, int m_, int d_, float a){
+    	this.news = new HoverNews(c, record, pos, y_, m_, d_, a);
+    	// this.news.drawNews();
+    	// this.news.hover_obj.SetActive(true);
+    	// this.news.hover_obj.transform.SetParent(daily_hover_obj.transform);
+    	// Debug.Log("!!!!!!!!");
+    }    
+
+    public void drawNewsObj(){
+    	// this.news = new HoverNews(c, record, pos, y_, m_, d_, a);
+    	this.news.drawNews();
+    	// this.news.hover_obj.SetActive(true);
+    	this.news.hover_obj.transform.SetParent(daily_hover_obj.transform);
+    	// Debug.Log("!!!!!!!!");
     }
 
     public void addMovie(Color c, int checkOut, int movie_index, Vector3 pos, int y_, int m_, int d_)

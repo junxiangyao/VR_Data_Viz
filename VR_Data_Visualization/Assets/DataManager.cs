@@ -114,7 +114,7 @@ public class DataManager
         // current_radius = 3.0f;
         float point_height =  (float)check_out_times / 16.0f;
         if(mv == 10 || mv == 11){
-            point_height /= 2.5f; 
+            point_height /= 2.48f; 
         }
 
         // float point_height =  (float)check_out_times  * 1.7f/8;

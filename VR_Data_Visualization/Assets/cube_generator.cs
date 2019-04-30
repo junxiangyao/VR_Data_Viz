@@ -60,6 +60,12 @@ public class cube_generator : MonoBehaviour
     GameObject hover_label_movie_date;
     GameObject hover_label_movie_name;
     GameObject hover_label_news;
+    GameObject hover_label_news_num;
+    GameObject hover_label_news_date;
+    GameObject hover_label_news_title;
+
+    bool hoverable = true;
+
     /////////////////////////////
     // mini map
     /////////////////////////////
@@ -89,13 +95,12 @@ public class cube_generator : MonoBehaviour
     GameObject label_mini_pointer_text;
     GameObject label_mini_pointer_line;
 
-
-
-
-
     // string[] year_text;
 
     int YEAR_COUNT = 14;
+
+
+
     ////////////////////////////////////
     // UI menu & buttons
     ////////////////////////////////////
@@ -159,6 +164,13 @@ public class cube_generator : MonoBehaviour
                             pcounter = hm.years[y].months[m].day_list[d].data_list[dt].movie_count;
                         }
                     }
+
+                    hm.years[y].months[m].day_list[d].initNewsObj(dm.movie_colors[10], 
+                            dm.MovieObjs[10].years[y].months[m].dayList[d].data.check_out_times,
+                            dm.MovieObjs[10].years[y].months[m].dayList[d].data.position,
+                            y,m,d,
+                            dm.MovieObjs[10].years[y].months[m].dayList[d].data.angle_radians * Mathf.Rad2Deg);
+
                     hm.years[y].months[m].day_list[d].drawHoverObjs();
                     hm.years[y].months[m].day_list[d].daily_hover_obj.SetActive(false);
                 }
@@ -179,15 +191,61 @@ public class cube_generator : MonoBehaviour
         {  
             
             string[] splits_sw = line_sw.Split(new[] { ',' });
-            // Debug.Log("@@@" + splits_sw[3]);
+            int y_sw, m_sw, d_sw;
+            int.TryParse(splits_sw[0],out y_sw);
+            int.TryParse(splits_sw[1],out m_sw);
+            int.TryParse(splits_sw[2],out d_sw);
+            if(splits_sw.Length > 4){
+                for(int i = 4; i < splits_sw.Length; ++i){
+                    splits_sw[3] += ", " + splits_sw[i];
+                }
+            }
+            hm.years[y_sw - 2005].months[m_sw - 1].day_list[d_sw - 1].news.news_sw.Add(splits_sw[3]);
+            hm.years[y_sw - 2005].months[m_sw - 1].day_list[d_sw - 1].news.news_count++;
+            // Debug.Log("@@@" + y_sw);
+            // Debug.Log("@@@" + (int.Parse(splits_sw[0]) - 2005));
         }  
-        file_news_sw.Close();
+        file_news_sw.Close();        
+        string line_spl;
+        System.IO.StreamReader file_news_spl = new System.IO.StreamReader(@"Assets/seattle_times_news_spl.csv");  
+        while((line_spl = file_news_spl.ReadLine()) != null)  
+        {  
+            
+            string[] splits_spl = line_spl.Split(new[] { ',' });
+            int y_spl, m_spl, d_spl;
+            int.TryParse(splits_spl[0],out y_spl);
+            int.TryParse(splits_spl[1],out m_spl);
+            int.TryParse(splits_spl[2],out d_spl);
+            if(splits_spl.Length > 4){
+                for(int i = 4; i < splits_spl.Length; ++i){
+                    splits_spl[3] += ", " + splits_spl[i];
+                }
+            }
+            hm.years[y_spl - 2005].months[m_spl - 1].day_list[d_spl - 1].news.news_spl.Add(splits_spl[3]);
+            hm.years[y_spl - 2005].months[m_spl - 1].day_list[d_spl - 1].news.news_count++;
+            // Debug.Log("@@@" + y_sw);
+            // Debug.Log("@@@" + (int.Parse(splits_sw[0]) - 2005));
+        }  
+        file_news_spl.Close();
+
+        for(int y = 0; y < YEAR_COUNT; ++y){
+            for(int m = 0; m < 12; ++m){
+                for(int d = 0; d < dm.MovieObjs[0].years[y].months[m].dayList.Count; ++d){
+                    hm.years[y].months[m].day_list[d].drawNewsObj();
+                }
+            }
+        }
+        
         // System.IO.StreamReader file_news_spl = new System.IO.StreamReader(@"Assets/seattle_times_news_spl.csv"); 
         // while((line = file_news_spl.ReadLine()) != null)  
         // {  
         //     int[] splits = parseLine(line);
         // }   
         // file_news_spl.Close();
+
+
+
+
         //Test Boxes
         // Color c = new Color(0.75f,0.75f,0.75f);
         // for(int mv = 0; mv < 12; ++mv){
@@ -335,7 +393,7 @@ public class cube_generator : MonoBehaviour
         hover_label_movie_name.GetComponent<Text>().font = arial;
         hover_label_movie_name.GetComponent<Text>().fontSize = 16;
         hover_label_movie_name.GetComponent<Text>().fontStyle = FontStyle.Normal;
-        hover_label_movie_name.GetComponent<Text>().color = Color.black;
+        hover_label_movie_name.GetComponent<Text>().color = Color.white;
         hover_label_movie_name.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
         hover_label_movie_name.transform.SetParent(hover_label_movie.transform);
         // Provide Text position and size using RectTransform.
@@ -346,7 +404,55 @@ public class cube_generator : MonoBehaviour
         rectTransform_name.sizeDelta = new Vector2(600,100);
 
 
-        // hover_label_news = GameObject.Find("HoverLabelNews");
+        hover_label_news = GameObject.Find("HoverLabelNews");
+        hover_label_news_num = new GameObject();
+        hover_label_news_num.AddComponent<Text>();
+        hover_label_news_num.GetComponent<Text>().text = "0";        
+        hover_label_news_num.GetComponent<Text>().font = arial;
+        hover_label_news_num.GetComponent<Text>().fontSize = 32;
+        hover_label_news_num.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        hover_label_news_num.GetComponent<Text>().color = Color.white;
+        hover_label_news_num.GetComponent<Text>().alignment = TextAnchor.MiddleRight;
+        hover_label_news_num.transform.SetParent(hover_label_news.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_sum;
+        rectTransform_sum = hover_label_news_num.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_sum.localPosition = new Vector3(-0.2f,0f,-0.01f);
+        rectTransform_sum.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_sum.sizeDelta = new Vector2(72,100);
+        
+        hover_label_news_date = new GameObject();
+        hover_label_news_date.AddComponent<Text>();
+        hover_label_news_date.GetComponent<Text>().text = "Jan.31.2005";        
+        hover_label_news_date.GetComponent<Text>().font = arial;
+        hover_label_news_date.GetComponent<Text>().fontSize = 12;
+        hover_label_news_date.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        hover_label_news_date.GetComponent<Text>().color = Color.white;
+        hover_label_news_date.GetComponent<Text>().alignment = TextAnchor.MiddleRight;
+        hover_label_news_date.transform.SetParent(hover_label_news.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_date_;
+        rectTransform_date_ = hover_label_news_date.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_date_.localPosition = new Vector3(-0.2f,0.18f,-0.01f);
+        rectTransform_date_.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_date_.sizeDelta = new Vector2(72,100);
+
+        hover_label_news_title = new GameObject();
+        hover_label_news_title.AddComponent<Text>();
+        hover_label_news_title.GetComponent<Text>().text = "Star Wars VIIIasdfh ajsdhf oaijsdfasdi jiasdjfa oiasdjfaksdjalg jsdv  jss hsaa jiajs jijj bingzhe 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679";        
+        hover_label_news_title.GetComponent<Text>().font = arial;
+        hover_label_news_title.GetComponent<Text>().fontSize = 16;
+        hover_label_news_title.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        hover_label_news_title.GetComponent<Text>().color = Color.white;
+        hover_label_news_title.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
+        hover_label_news_title.transform.SetParent(hover_label_news.transform);
+        // Provide Text position and size using RectTransform.
+        RectTransform rectTransform_title;
+        rectTransform_title = hover_label_news_title.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_title.localPosition = new Vector3(0.604f,0f,-0.01f);
+        rectTransform_title.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
+        rectTransform_title.sizeDelta = new Vector2(300,1200);
+
 
         ///////////////////////////////////////
         // mini map
@@ -501,6 +607,25 @@ public class cube_generator : MonoBehaviour
         local_date.SetActive(false);
         year_this.SetActive(false);
         year_next.SetActive(false);
+
+
+
+
+        if (left_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+        {
+            mini_map.SetActive(true);
+            canvas_for_movies.SetActive(true);
+        }else{
+            mini_map.SetActive(false);
+            canvas_for_movies.SetActive(false);
+        }
+        hoverable = false;
+        if(right_controller.GetComponent<VRTK_ControllerEvents>().gripPressed){
+            hoverable = true;
+        }
+
+        hover_label_movie.SetActive(false);
+        hover_label_news.SetActive(false);
         // Debug.Log("base:"+base_world.transform.position);
         int current_year = 0;
         int current_month = 0;
@@ -522,6 +647,7 @@ public class cube_generator : MonoBehaviour
         if(real_polar_angle < 0){real_polar_angle += 360;}
         // Debug.Log("angle: " + pos_polar_angle);
         if(current_year != 0){
+            hover_label_news.SetActive(true);
             local_date.SetActive(true);
             if(real_polar_angle >= dm.getData(0,current_year,12,1).angle_radians * Mathf.Rad2Deg)
             {
@@ -561,7 +687,13 @@ public class cube_generator : MonoBehaviour
                 dm.getData(0,current_year + 1,1,1).radius * Mathf.Cos(dm.getData(0,current_year + 1,current_month,current_day).angle_radians));
                 year_next.transform.localRotation = Quaternion.Euler(90, dm.getData(0,current_year + 1,current_month,current_day).angle_radians * Mathf.Rad2Deg, 0);
             } 
-            hm.unmute(current_year, current_month, current_day);
+
+            if(hoverable){
+                hm.unmute(current_year, current_month, current_day);
+            }else{
+                hm.muteAll();
+            }
+
 
             // controlling
             // for(int y = 0; y < 14; ++y){
@@ -603,6 +735,8 @@ public class cube_generator : MonoBehaviour
             //         }
             //     }
             // }
+        }else{
+            hm.muteAll();
         }
 
 
@@ -824,11 +958,12 @@ public class cube_generator : MonoBehaviour
             mini_map.transform.localRotation = Quaternion.Euler(0, yRotation, 0);
         }
 
-        Debug.Log("RRR" + base_world.transform.rotation.eulerAngles.y);
+        // Debug.Log("RRR" + base_world.transform.rotation.eulerAngles.y);
 
         /*************************************************
             pointer controls
         *************************************************/
+
         if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerTouched)
         {
             RaycastHit hit = pointer.pointerRenderer.GetDestinationHit();
@@ -837,7 +972,7 @@ public class cube_generator : MonoBehaviour
             //         GameObject.ReferenceEquals(hit.transform.gameObject, mini_map_out))
             // Debug.Log("+++" + hit.transform.gameObject);
             if(hit.transform.gameObject.CompareTag("data_node")){
-                
+                hover_label_movie.SetActive(true);
                 hover_label_movie.transform.localPosition = new Vector3(
                     hit.transform.gameObject.transform.position.x,
                     hit.transform.gameObject.transform.position.y,
@@ -889,7 +1024,97 @@ public class cube_generator : MonoBehaviour
 
                 }
                 
-                Debug.Log("!!!!!");
+                // Debug.Log("!!!!!");
+            };
+            if(hit.transform.gameObject.CompareTag("news_node")){
+                hover_label_news.transform.localPosition = new Vector3(
+                    hit.transform.gameObject.transform.position.x,
+                    hit.transform.gameObject.transform.position.y,
+                    hit.transform.gameObject.transform.position.z);
+                
+                hover_label_news.transform.localPosition = hover_label_news.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
+                if(hit.transform.gameObject.GetComponent<InfoCube>().c_out > 0){
+                    hover_label_news_num.GetComponent<Text>().text = "sum" +  hit.transform.gameObject.GetComponent<InfoCube>().c_out;
+                }else{
+                    hover_label_news_num.GetComponent<Text>().text = "" + 0;
+                    hover_label_news_num.GetComponent<Text>().GetComponent<RectTransform>().transform.localPosition = new Vector3(-0.2f,0.1f,-0.01f);
+                }
+                
+
+                hover_label_news_date.GetComponent<Text>().text = month_text[hit.transform.gameObject.GetComponent<InfoCube>().mb] +
+                (hit.transform.gameObject.GetComponent<InfoCube>().db + 1) + "." + (hit.transform.gameObject.GetComponent<InfoCube>().yb+2005);
+                HoverNews n_buffer = hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].news;
+                hover_label_news_title.GetComponent<Text>().text = "";
+                if(n_buffer.news_count == 0){
+                    hover_label_news_title.GetComponent<Text>().text = "N/A";
+                    hover_label_news_title.GetComponent<RectTransform>().localPosition = new Vector3(1.008f,0f,-0.01f);
+                }else{
+                    for(int i = 0; i < n_buffer.news_sw.Count; ++i){
+                        hover_label_news_title.GetComponent<Text>().text += "- " + n_buffer.news_sw[i] + "\n";
+                    }
+                    if(n_buffer.news_sw.Count > 0 && n_buffer.news_spl.Count > 0){
+                        hover_label_news_title.GetComponent<Text>().text += "------------------------------------------------------------\n";
+                    }
+                    for(int i = 0; i < n_buffer.news_spl.Count; ++i){
+                        hover_label_news_title.GetComponent<Text>().text += "- " + n_buffer.news_spl[i] + "\n";
+                    }
+                    hover_label_news_title.GetComponent<RectTransform>().localPosition = new Vector3(0.608f,0f,-0.01f);
+                }
+
+                if(n_buffer.news_count > 2){
+                    hover_label_news.GetComponent<RectTransform>().sizeDelta = new Vector2(1.2f, 0.48f + 0.16f * (n_buffer.news_count - 2) + 0.1f);
+                }else if(n_buffer.news_count < 2){
+                    hover_label_news.GetComponent<RectTransform>().sizeDelta = new Vector2(1.2f, 0.4f);
+                }else{
+                    hover_label_news.GetComponent<RectTransform>().sizeDelta = new Vector2(1.2f, 0.48f);
+                }
+                // hover_label_news.GetComponent<RectTransform>().sizeDelta = new Vector2(1.2, 0.5f);
+                hover_label_news.transform.localRotation = Quaternion.Euler(60f * (hover_label_news.transform.localPosition.y - 1.7f) / (1.7f - 4.9f),
+                 base_world.transform.rotation.eulerAngles.y, 0);
+                hover_label_news_num.GetComponent<RectTransform>().localPosition = new Vector3(-0.2f,0f,-0.01f);
+                hover_label_news_date.GetComponent<RectTransform>().localPosition = new Vector3(-0.2f,0.18f,-0.01f);
+                Debug.Log("height"+hover_label_news.transform.localPosition.y);
+
+                // hover_label_news_title.GetComponent<RectTransform>().sizeDelta = new Vector3(0.608f,0f,-0.01f);
+                // if(hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index.Count > 1){
+                //     hover_label_movie_name.GetComponent<Text>().text = "";
+                //     float extend_width = 0;
+                //     for(int i = 0; i < hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index.Count; ++i){
+                //         int multi_buffer = hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index[i];
+                //         if(dm.show_movies[multi_buffer]){
+                //             hover_label_movie_name.GetComponent<Text>().text += title_short[multi_buffer] + " ";
+                //             if(multi_buffer < 8){
+                //                 extend_width += 0.34f + multi_buffer * 0.01f;
+                //             }else if(multi_buffer == 8){
+                //                 extend_width += 0.36f;
+                //             }else{
+                //                 extend_width += 0.3f;
+                //             }
+                //             hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(extend_width, 0.1f);
+                //             hover_label_movie_num.GetComponent<RectTransform>().localPosition = new Vector3(-0.1f,0f,-0.01f);
+                //             hover_label_movie_date.GetComponent<RectTransform>().localPosition = new Vector3(0.136f,0.1f,-0.01f);
+                //             hover_label_movie_name.GetComponent<RectTransform>().localPosition = new Vector3(1.204f,0f,-0.01f);
+                //         } 
+                //     }
+                // }else{
+                //     int index_buffer = hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index[0]; 
+                //     hover_label_movie_name.GetComponent<Text>().text = title_short[index_buffer];
+                //     // hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(0.6f, 0.1f);
+                //     if(index_buffer < 8){
+                //         float bg_width = 0.34f + index_buffer * 0.01f;
+                //         hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(bg_width, 0.1f);
+                //     }else if(index_buffer ==8){
+                //         hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(0.36f, 0.1f);
+                //     }else{
+                //         hover_label_movie.GetComponent<RectTransform>().sizeDelta = new Vector2(0.3f, 0.1f);
+                //     }
+                //     hover_label_movie_num.GetComponent<RectTransform>().localPosition = new Vector3(-0.1f,0f,-0.01f);
+                //     hover_label_movie_date.GetComponent<RectTransform>().localPosition = new Vector3(0.136f,0.1f,-0.01f);
+                //     hover_label_movie_name.GetComponent<RectTransform>().localPosition = new Vector3(1.204f,0f,-0.01f);
+
+                // }
+                
+                // Debug.Log("!!!!!");
             };
             if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
             {
@@ -978,19 +1203,19 @@ public class cube_generator : MonoBehaviour
 
 
 
-        if(current_year != 0){
-            for(int y = 0; y < 14; ++y){
-                for(int m = 0; m < 12; ++m){
-                    if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active based on boolean in dm and it should be shown based on location
-                        for(int d = 0; d < hm.years[y].months[m].day_list.Count; ++d){
-                            for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
-                                // hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter = 0;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // if(current_year != 0){
+        //     for(int y = 0; y < 14; ++y){
+        //         for(int m = 0; m < 12; ++m){
+        //             if(hm.years[y].months[m].month_hover_obj.active && hm.years[y].months[m].should_draw){ // if this month is active based on boolean in dm and it should be shown based on location
+        //                 for(int d = 0; d < hm.years[y].months[m].day_list.Count; ++d){
+        //                     for(int dt = 0; dt < hm.years[y].months[m].day_list[d].data_list.Count; ++dt){
+        //                         // hm.years[y].months[m].day_list[d].data_list[dt].sharing_counter = 0;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         // /*************************************************
         //     ray cast control
         // **************************************************/
