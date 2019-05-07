@@ -6,6 +6,7 @@ using VRTK;
 
 using static DataManager;
 using static HoverManager;
+using static VRButton;
 
 
 public class cube_generator : MonoBehaviour
@@ -107,7 +108,11 @@ public class cube_generator : MonoBehaviour
     GameObject canvas_for_movies;
     Button b;
     ColorBlock color_buffer;
-
+    VRButton[] year_buttons;
+    VRButton[] month_buttons;
+    Color normal_on_color;
+    Color normal_hl_color;
+    Color normal_off_color;
 
     // Start is called before the first frame update
     void Start()
@@ -492,6 +497,49 @@ public class cube_generator : MonoBehaviour
         b.onClick.AddListener(CustomButton_onClick);
         color_buffer = new ColorBlock();
 
+        normal_on_color = new Color(200 * 1.0f/255, 200 * 1.0f/255, 200 * 1.0f/255);
+    	normal_hl_color  = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
+    	normal_off_color = new Color(155 * 1.0f/255, 155 * 1.0f/255, 155 * 1.0f/255);
+
+        year_buttons = new VRButton[16];
+        for(int i = 0; i < 16; ++i){
+        	if(i < 14){
+        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color,"" + (2005 + i), arial);
+        		int index = i;
+        		year_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>year_onClick(index));
+        	}else if(i == 14){
+        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Show All", arial);
+        		year_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 14; ++j){dm.show_years[j] = true;}});
+        	}else{
+        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Hide All", arial);
+        		year_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 14; ++j){dm.show_years[j] = false;}});
+        	}
+        }
+
+        month_buttons = new VRButton[14];
+        for(int i = 0; i < 14; ++i){
+        	if(i < 12){
+        		month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color, month_text[i], arial);
+        		int index = i;
+        		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>month_onClick(index));
+        	}else if(i == 12){
+          		month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color, "Show All", arial);
+        		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 12; ++j){dm.show_months[j] = true;}});      		
+        	}else{
+                month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color, "Hide All", arial);
+        		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 12; ++j){dm.show_months[j] = false;}});  		
+        	}
+        }
+
+        // v = new VRButton(canvas_for_movies.transform);
+        // v.button_obj.transform.SetParent(canvas_for_movies.tran);
+
         //--------------------------------------------------- labels -------------------------------------------------------
         canvas_label_mini = GameObject.Find("LabelMini");
         canvas_label_mini.GetComponent<Collider>().isTrigger = true;
@@ -870,9 +918,11 @@ public class cube_generator : MonoBehaviour
                     // or if January is not shown in the scene, hide Decemembers connector.
                     if(!dm.show_years[y+1] || !dm.show_months[0]){
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next.SetActive(false); 
+                        dm.MovieObjs[mv].years[y].months[11].mini_connection_to_next.SetActive(false); 
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next_wall.SetActive(false); 
                     }else{
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next.SetActive(dm.show_months[11]);
+                        dm.MovieObjs[mv].years[y].months[11].mini_connection_to_next.SetActive(dm.show_months[11]);
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next_wall.SetActive(dm.show_wall);  
                     }
                 }
@@ -1310,4 +1360,12 @@ public class cube_generator : MonoBehaviour
         dm.show_date_lines = !dm.show_date_lines;
     }
 
+    void month_onClick(int i)
+    {
+        dm.show_months[i] = !dm.show_months[i];
+    }    
+    void year_onClick(int i)
+    {
+        dm.show_years[i] = !dm.show_years[i];
+    }
 }
