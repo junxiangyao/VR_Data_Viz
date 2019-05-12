@@ -93,6 +93,8 @@ public class cube_generator : MonoBehaviour
     float dist_real = 0.0f;
     float dist_scale = 0.0f;  
     float pos_polar_angle = 0.0f;  
+    float scale_polar_angle = 0.0f;  // for scaling interface
+
     GameObject hit_point; // the point hit by pointer
     Coordinate mini_coordinate;
 
@@ -209,26 +211,11 @@ public class cube_generator : MonoBehaviour
         world_scaler = new GameObject();
         world_scaler.AddComponent<Transform>();
         world_scaler.GetComponent<Transform>().localScale = new Vector3(1f,1f,1f);
-        // world_scaler = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        // world_scaler.transform.localScale = new Vector3(1f,1f,1f);
-        // world_scaler.transform.localPosition = new Vector3(0,0,0);
-        // world_scaler.GetComponent<Renderer>().material.color = Color.white;
-        // world_scaler = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        // world_scaler.transform.localScale = new Vector3(0.3f,0.01f,0.3f);
-        // world_scaler.GetComponent<Renderer>().material.color = new Color(56 * 1.0f/255, 48 * 1.0f/255, 60 * 1.0f/255);
-        // world_scaler.transform.SetParent(left_controller.transform); // set the left controller to be the parent instead of mini map because mini map is scaled, and its local coordinate is distorted. 
-        // Destroy(world_scaler.GetComponent<BoxCollider>());
 
 
         for(int i = 0; i < 11; ++i){
         	dm.MovieObjs[i].game_object.transform.SetParent(world_scaler.transform, false);
         }
-        // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        // // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
-        // cube.transform.localScale = new Vector3(0.01f,0.01f,0.01f);
-        // cube.transform.position = pos;
-        // cube.GetComponent<Collider>().isTrigger = true;
-        // cube.GetComponent<Renderer>().material.color = color;
 
         MetaData md = dm.getData(3,2012,2,29);
         Debug.Log("md.check_out_times = " + md.check_out_times);
@@ -336,10 +323,11 @@ public class cube_generator : MonoBehaviour
         //-----------------------------------------circles-------------------------------------
         for(int i = 0; i < 15; ++i){
             if(i == 14){
-                year_circles[i] = generate_circle(current_radius + INCREASE, 400, new Color(180 * 1.0f/255, 180 * 1.0f/255, 180 * 1.0f/255));
+                year_circles[i] = generate_circle(current_radius + INCREASE, 400, new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255));
             }else{
-                year_circles[i] = generate_circle(dm.getData(0,2005 + i,1,1).radius, 100 + i * 20, new Color(180 * 1.0f/255, 180 * 1.0f/255, 180 * 1.0f/255));       
+                year_circles[i] = generate_circle(dm.getData(0,2005 + i,1,1).radius, 100 + i * 20, new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255));       
             }
+            year_circles[i].transform.SetParent(world_scaler.transform, false);
         }
         //------------------------------------------ lables on the floor --------------------------------------
         label_node_data = new GameObject();
@@ -1430,21 +1418,86 @@ public class cube_generator : MonoBehaviour
                 }
             }else if(scale_mode){
             	if(GameObject.ReferenceEquals(hit.transform.gameObject, floor)){
-            		 dist_scale = Vector3.Distance(new Vector3(0,0,0), hit.point);
+            		float scale_multiplier = 0.1f + 0.2f * slider.GetComponent<Slider>().value;
+            		dist_scale = Vector3.Distance(new Vector3(0,0,0), hit.point);
+            		if(dist_scale >= scale_multiplier * dm.getData(0,2005,1,1).radius && dist_scale < scale_multiplier * dm.getData(0,2018,12,31).radius){
+	            		label_scale_pointer.SetActive(true);
+	            		label_scale_pointer_line.SetActive(true);
+	            		label_scale_pointer.transform.localPosition = new Vector3(hit.point.x,hit.point.y+1.7f,hit.point.z);
+	            		label_scale_pointer_line.transform.localPosition = new Vector3(hit.point.x,0,hit.point.z);
+	            		label_scale_pointer.transform.localRotation = Quaternion.Euler(60f * (label_scale_pointer.transform.localPosition.y - 1.7f) / (1.7f - 4.9f),
+	                 base_world.transform.rotation.eulerAngles.y, 0);
 
-            		label_scale_pointer.SetActive(true);
-            		label_scale_pointer_line.SetActive(true);
-            		label_scale_pointer.transform.localPosition = new Vector3(hit.point.x,hit.point.y+1.7f,hit.point.z);
-            		label_scale_pointer_line.transform.localPosition = new Vector3(hit.point.x,0,hit.point.z);
-            		label_scale_pointer.transform.localRotation = Quaternion.Euler(60f * (label_scale_pointer.transform.localPosition.y - 1.7f) / (1.7f - 4.9f),
-                 base_world.transform.rotation.eulerAngles.y, 0);
-            		if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
-                    {
-                        teleporter.ForceTeleport(hit.point / (0.1f + 0.2f * slider.GetComponent<Slider>().value),Quaternion.Euler(new Vector3(0, 0, 0)));
-                        has_scale_teleported = true;
-                        world_scaler.transform.localScale = new Vector3(1f,1f,1f);
-                        slider.GetComponent<Slider>().value = 1f;
-                    }
+
+	            		int hover_year = 0;
+                    	int hover_month = 0;
+                    	int hover_day = 0;
+
+	                    if(dist_scale >= dm.getData(0,2018,1,1).radius  * scale_multiplier && dist_scale <= dm.getData(0,2018,12,31).radius * scale_multiplier)
+	                    {
+	                        hover_year = 2018;
+	                        // Debug.Log(2018);
+	                    }else{
+	                        for(int i = 0; i < 13; ++i){
+	                            if(dist_scale >= dm.getData(0,2005 + i,1,1).radius  * scale_multiplier && dist_scale < dm.getData(0,2005 + i + 1,1,1).radius  * scale_multiplier)
+	                            {
+	                                hover_year = 2005 + i;
+	                                // Debug.Log(2005+i);
+	                                break;
+	                            }
+	                        }
+	                    }
+
+	                    scale_polar_angle = Mathf.Atan2(hit.point.x, hit.point.z) * Mathf.Rad2Deg;
+	                    if(scale_polar_angle < 0){scale_polar_angle += 360;}
+
+	                    if(hover_year != 0){
+	                        if(scale_polar_angle >= dm.getData(0,hover_year,12,1).angle_radians * Mathf.Rad2Deg)
+	                        {
+	                            hover_month = 12;
+	                            // Debug.Log(2018);
+	                        }else{
+	                            for(int i = 0; i < 11; ++i){
+	                                if(scale_polar_angle >= dm.getData(0,hover_year,i+1,1).angle_radians * Mathf.Rad2Deg && scale_polar_angle < dm.getData(0,hover_year,i+2,1).angle_radians * Mathf.Rad2Deg)
+	                                {
+	                                    hover_month = i+1;
+	                                    // Debug.Log(2005+i);
+	                                    break;
+	                                }
+	                            }
+	                        }
+
+
+	                        for(int i = 0; i < dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count - 1; ++i)
+	                        {
+	                            if(scale_polar_angle >= dm.getData(0,hover_year,hover_month,i + 1).angle_radians * Mathf.Rad2Deg && 
+	                                scale_polar_angle < dm.getData(0,hover_year,hover_month,i + 2).angle_radians * Mathf.Rad2Deg)
+	                            {
+	                                hover_day = i+1;
+	                                // Debug.Log(2005+i);
+	                                break;
+	                            }else{
+	                                hover_day = dm.MovieObjs[0].years[hover_year-2005].months[hover_month-1].day_count;
+	                            }
+	                        }
+	                        Debug.Log("year: " + hover_year + "month: " + hover_month + "day: " + hover_day);
+	                        label_scale_pointer_text.GetComponent<Text>().text = month_text[hover_month-1] + " " + hover_day +". " + hover_year; 
+	                        // label_mini_pointer.SetActive(true); 
+                    	}
+
+
+
+
+
+
+	            		if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+	                    {
+	                        teleporter.ForceTeleport(hit.point / (0.1f + 0.2f * slider.GetComponent<Slider>().value),Quaternion.Euler(new Vector3(0, 0, 0)));
+	                        has_scale_teleported = true;
+	                        world_scaler.transform.localScale = new Vector3(1f,1f,1f);
+	                        slider.GetComponent<Slider>().value = 1f;
+	                    }
+            		}
             	}
             }
         }
@@ -1525,12 +1578,13 @@ public class cube_generator : MonoBehaviour
         LineRenderer line_renderer = circle.AddComponent<LineRenderer>();
         line_renderer.material = new Material(Shader.Find("Sprites/Default"));
         line_renderer.widthMultiplier = 0.004f;
+        line_renderer.useWorldSpace = false;
         // line_renderer.sortingOrder = 1;
         if(resolution < 8){
             resolution = 8;
         }
         line_renderer.positionCount = resolution + 1;
-        line_renderer.useWorldSpace = true;
+        // line_renderer.useWorldSpace = true;
         line_renderer.startColor = color;
         line_renderer.endColor = color;
         for(int i = 0; i < resolution + 1; ++i){
