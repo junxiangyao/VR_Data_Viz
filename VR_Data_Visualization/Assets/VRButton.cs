@@ -9,6 +9,7 @@ public class VRButton
 	public GameObject button_text;
 	public ColorBlock color_buffer;
 	public Color off_color;
+	public Color on_color;
 
 	public VRButton(Transform canvas_transform, Vector3 pos, Color on, Color highlight, Color off, string t, Font f){
 		button_obj = new GameObject();
@@ -28,6 +29,7 @@ public class VRButton
 		color_buffer.highlightedColor = highlight;	
 		color_buffer.colorMultiplier = 1f;
 		off_color = off;
+		on_color = on;
 
 		button_obj.AddComponent<Button>();
 		button_obj.GetComponent<Button>().colors = color_buffer;

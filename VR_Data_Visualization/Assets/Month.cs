@@ -80,7 +80,7 @@ public class Month
         line_renderer.positionCount = dayList.Count;
         line_renderer.startColor = c;
         line_renderer.endColor = c;
-
+        line_renderer.useWorldSpace = false;
         for(int i = 0; i < this.dayList.Count; ++i){
             line_renderer.SetPosition(i, this.dayList[i].data.position);
         }
@@ -94,6 +94,7 @@ public class Month
         line_renderer.positionCount = 2;
         line_renderer.startColor = c;
         line_renderer.endColor = c;
+        line_renderer.useWorldSpace = false;
         line_renderer.SetPosition(0, this.dayList[dayList.Count - 1].data.position);
         line_renderer.SetPosition(1, next_point);
     }
@@ -110,12 +111,12 @@ public class Month
         ***************************/
         for(int i = 0; i < day_count; ++i)
         {
-            vertices[i] = this.dayList[i].data.position;
+            vertices[i] = this.dayList[i].data.wall_position;
         }
         for(int i = day_count; i < day_count * 2; ++i)
         {
-            vertices[i] = new Vector3(this.dayList[i - day_count].data.position.x, 0,
-                this.dayList[i - day_count].data.position.z);
+            vertices[i] = new Vector3(this.dayList[i - day_count].data.wall_position.x, 0,
+                this.dayList[i - day_count].data.wall_position.z);
         }
         int counter = 0;
         for(int i = 0; i < day_count - 1; ++i) // each iteration draws two triangles
@@ -142,9 +143,9 @@ public class Month
     public void connectWall(Color c, Vector3 next_point){
         Vector3[] vertices = new Vector3[4];
         //end point
-        vertices[0] = this.dayList[dayList.Count - 1].data.position;
-        vertices[2] = new Vector3(this.dayList[dayList.Count - 1].data.position.x, 0,
-                this.dayList[dayList.Count - 1].data.position.z);
+        vertices[0] = this.dayList[dayList.Count - 1].data.wall_position;
+        vertices[2] = new Vector3(this.dayList[dayList.Count - 1].data.wall_position.x, 0,
+                this.dayList[dayList.Count - 1].data.wall_position.z);
         //start point of next
         vertices[1] = next_point;
         vertices[3] = new Vector3(next_point.x, 0, next_point.z);
@@ -206,12 +207,12 @@ public class Month
         ***************************/
         for(int i = 0; i < day_count; ++i)
         {
-            vertices[i] = this.dayList[i].data.position;
+            vertices[i] = this.dayList[i].data.mini_position;
         }
         for(int i = day_count; i < day_count * 2; ++i)
         {
-            vertices[i] = new Vector3(this.dayList[i - day_count].data.position.x, 0,
-                this.dayList[i - day_count].data.position.z);
+            vertices[i] = new Vector3(this.dayList[i - day_count].data.mini_position.x, 0,
+                this.dayList[i - day_count].data.mini_position.z);
         }
         int counter = 0;
         for(int i = 0; i < day_count - 1; ++i) // each iteration draws two triangles
@@ -224,23 +225,23 @@ public class Month
             triangles[counter++] = day_count+i; //2
         }
 
-        mesh_month.vertices = vertices;
+        mini_mesh_month.vertices = vertices;
         // mesh.uv = uv;
-        mesh_month.triangles = triangles;
+        mini_mesh_month.triangles = triangles;
         // material.SetFloat("_Mode", 3f);
-        StandardShaderUtils.ChangeRenderMode(material_month, StandardShaderUtils.BlendMode.Transparent);
-        material_month.color =  new Color(c.r,c.g,c.b,0.3f);
+        StandardShaderUtils.ChangeRenderMode(mini_material_month, StandardShaderUtils.BlendMode.Transparent);
+        mini_material_month.color =  new Color(c.r,c.g,c.b,0.3f);
         // Debug.Log("!");
-        month_data_wall.GetComponent<MeshFilter>().mesh = mesh_month;
-        month_data_wall.GetComponent<MeshRenderer>().material = material_month;
+        mini_month_data_wall.GetComponent<MeshFilter>().mesh = mini_mesh_month;
+        mini_month_data_wall.GetComponent<MeshRenderer>().material = mini_material_month;
     }
 
     public void connectWallMini(Color c, Vector3 next_point){
         Vector3[] vertices = new Vector3[4];
         //end point
-        vertices[0] = this.dayList[dayList.Count - 1].data.position;
-        vertices[2] = new Vector3(this.dayList[dayList.Count - 1].data.position.x, 0,
-                this.dayList[dayList.Count - 1].data.position.z);
+        vertices[0] = this.dayList[dayList.Count - 1].data.mini_position;
+        vertices[2] = new Vector3(this.dayList[dayList.Count - 1].data.mini_position.x, 0,
+                this.dayList[dayList.Count - 1].data.mini_position.z);
         //start point of next
         vertices[1] = next_point;
         vertices[3] = new Vector3(next_point.x, 0, next_point.z);
@@ -252,12 +253,12 @@ public class Month
         triangles[4] = 3;
         triangles[5] = 2;
 
-        mesh_connect.vertices = vertices;
-        mesh_connect.triangles = triangles;
-        StandardShaderUtils.ChangeRenderMode(material_connect, StandardShaderUtils.BlendMode.Transparent);
-        material_connect.color =  new Color(c.r,c.g,c.b,0.3f);
-        connection_to_next_wall.GetComponent<MeshFilter>().mesh = mesh_connect;
-        connection_to_next_wall.GetComponent<MeshRenderer>().material = material_connect;
+        mini_mesh_connect.vertices = vertices;
+        mini_mesh_connect.triangles = triangles;
+        StandardShaderUtils.ChangeRenderMode(mini_material_connect, StandardShaderUtils.BlendMode.Transparent);
+        mini_material_connect.color =  new Color(c.r,c.g,c.b,0.3f);
+        mini_connection_to_next_wall.GetComponent<MeshFilter>().mesh = mini_mesh_connect;
+        mini_connection_to_next_wall.GetComponent<MeshRenderer>().material = mini_material_connect;
     }
 
     public String printInfo()

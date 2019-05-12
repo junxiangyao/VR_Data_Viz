@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
+using static StandardShaderUtils;
 
 using static DataManager;
 using static HoverManager;
@@ -65,8 +66,21 @@ public class cube_generator : MonoBehaviour
     GameObject hover_label_news_date;
     GameObject hover_label_news_title;
 
+
+    GameObject floor;
+
+    GameObject world_scaler;
+
+    bool scale_mode = false;
+    int pre_status = 0;
+
     bool hoverable = true;
 
+    Vector3 position_buffer;
+    Quaternion rotation_buffer;
+    float y_rotation_buffer;
+
+    bool has_scale_teleported = false;
     /////////////////////////////
     // mini map
     /////////////////////////////
@@ -76,7 +90,8 @@ public class cube_generator : MonoBehaviour
     float rotation_counter;
     float yRotation = 0.0f; // rotation of the mini map
     float dist_mini = 0.0f;
-    float dist_real = 0.0f;  
+    float dist_real = 0.0f;
+    float dist_scale = 0.0f;  
     float pos_polar_angle = 0.0f;  
     GameObject hit_point; // the point hit by pointer
     Coordinate mini_coordinate;
@@ -94,7 +109,11 @@ public class cube_generator : MonoBehaviour
 
     GameObject label_mini_pointer;
     GameObject label_mini_pointer_text;
-    GameObject label_mini_pointer_line;
+    GameObject label_mini_pointer_line; 
+
+    GameObject label_scale_pointer;
+    GameObject label_scale_pointer_text;
+    GameObject label_scale_pointer_line;
 
     // string[] year_text;
 
@@ -106,10 +125,15 @@ public class cube_generator : MonoBehaviour
     // UI menu & buttons
     ////////////////////////////////////
     GameObject canvas_for_movies;
+    GameObject slider;
     Button b;
     ColorBlock color_buffer;
     VRButton[] year_buttons;
     VRButton[] month_buttons;
+    VRButton[] movie_buttons;
+    VRButton date_line_button;
+    VRButton wall_button;
+    VRButton wall_mini_button;
     Color normal_on_color;
     Color normal_hl_color;
     Color normal_off_color;
@@ -182,7 +206,29 @@ public class cube_generator : MonoBehaviour
                 hm.years[y].months[m].set_parent();
             }
         }
-        
+        world_scaler = new GameObject();
+        world_scaler.AddComponent<Transform>();
+        world_scaler.GetComponent<Transform>().localScale = new Vector3(1f,1f,1f);
+        // world_scaler = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        // world_scaler.transform.localScale = new Vector3(1f,1f,1f);
+        // world_scaler.transform.localPosition = new Vector3(0,0,0);
+        // world_scaler.GetComponent<Renderer>().material.color = Color.white;
+        // world_scaler = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        // world_scaler.transform.localScale = new Vector3(0.3f,0.01f,0.3f);
+        // world_scaler.GetComponent<Renderer>().material.color = new Color(56 * 1.0f/255, 48 * 1.0f/255, 60 * 1.0f/255);
+        // world_scaler.transform.SetParent(left_controller.transform); // set the left controller to be the parent instead of mini map because mini map is scaled, and its local coordinate is distorted. 
+        // Destroy(world_scaler.GetComponent<BoxCollider>());
+
+
+        for(int i = 0; i < 11; ++i){
+        	dm.MovieObjs[i].game_object.transform.SetParent(world_scaler.transform, false);
+        }
+        // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        // // cube.transform.localScale = new Vector3(0.03f,0.03f,0.03f);
+        // cube.transform.localScale = new Vector3(0.01f,0.01f,0.01f);
+        // cube.transform.position = pos;
+        // cube.GetComponent<Collider>().isTrigger = true;
+        // cube.GetComponent<Renderer>().material.color = color;
 
         MetaData md = dm.getData(3,2012,2,29);
         Debug.Log("md.check_out_times = " + md.check_out_times);
@@ -285,6 +331,7 @@ public class cube_generator : MonoBehaviour
         player_world = GameObject.Find("[VRTK_SDKSetups]").transform.GetChild(3).GetChild(0).gameObject;
         base_world = GameObject.Find("[VRTK_SDKSetups]").transform.GetChild(3).GetChild(1).GetChild(0).gameObject;
         teleporter = play_area.GetComponent<VRTK_BasicTeleport>(); 
+       	floor = GameObject.Find("Floor");
         year_circles = new GameObject[15];
         //-----------------------------------------circles-------------------------------------
         for(int i = 0; i < 15; ++i){
@@ -359,6 +406,7 @@ public class cube_generator : MonoBehaviour
 
         //--------------------------------------------------------pointer hovering-----------------------------------------------
         hover_label_movie = GameObject.Find("HoverLabelMovie");
+        hover_label_movie.GetComponent<Canvas>().sortingOrder = 2;
         hover_label_movie_num = new GameObject();
         hover_label_movie_num.AddComponent<Text>();
         hover_label_movie_num.GetComponent<Text>().text = "0";        
@@ -410,6 +458,7 @@ public class cube_generator : MonoBehaviour
 
 
         hover_label_news = GameObject.Find("HoverLabelNews");
+        hover_label_news.GetComponent<Canvas>().sortingOrder = 2;
         hover_label_news_num = new GameObject();
         hover_label_news_num.AddComponent<Text>();
         hover_label_news_num.GetComponent<Text>().text = "0";        
@@ -478,14 +527,18 @@ public class cube_generator : MonoBehaviour
         Destroy(mini_map_out.GetComponent<CapsuleCollider>());
 
         //--------------------------------------------- graphics on mini map ----------------------------------------
+        // dm => mini_Object => mini_game_oject (movie) => mini_year => mini_month()
         dm.drawDateMini();
         dm.drawDataMini();
         dm.mini_object.transform.localPosition = new Vector3(0,1f,0);
         dm.mini_object.transform.SetParent(mini_map.transform, false);
 
         //---------------------------------------------- marker on mini map ------------------------------------------
+        // player_marker = new GameObject("Mesh", typeof(MeshFilter), typeof(MeshRenderer));
+        // drawMarker(player_marker, new Color(255 * 1.0f/255, 204 * 1.0f/255, 0 * 1.0f/255));
         player_marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
         player_marker.transform.localScale = new Vector3(0.004f,0.1f,0.004f);
+        player_marker.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 204 * 1.0f/255, 0 * 1.0f/255);
         player_marker.transform.SetParent(mini_map.transform);
         player_marker.transform.localPosition = new Vector3(0,5f,0); // impacted by the scaling of its parent
         hit_point = new GameObject();
@@ -493,13 +546,26 @@ public class cube_generator : MonoBehaviour
         //------------------------------------------------ menus and buttons ------------------------------------------
         canvas_for_movies = GameObject.Find("Canvas");
         canvas_for_movies.transform.SetParent(left_controller.transform, true);
-        b = canvas_for_movies.transform.GetChild(1).gameObject.GetComponent<Button>();
-        b.onClick.AddListener(CustomButton_onClick);
+        // b = canvas_for_movies.transform.GetChild(1).gameObject.GetComponent<Button>();
+        // b.onClick.AddListener(CustomButton_onClick);
+        slider = canvas_for_movies.transform.GetChild(0).gameObject;
         color_buffer = new ColorBlock();
 
-        normal_on_color = new Color(200 * 1.0f/255, 200 * 1.0f/255, 200 * 1.0f/255);
+        normal_on_color = new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255);
     	normal_hl_color  = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
-    	normal_off_color = new Color(155 * 1.0f/255, 155 * 1.0f/255, 155 * 1.0f/255);
+    	normal_off_color = new Color(120 * 1.0f/255, 120 * 1.0f/255, 120 * 1.0f/255);
+
+    	date_line_button = new VRButton(canvas_for_movies.transform, new Vector3(-240, 200f - 0 * 34f, 0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Date Lines", arial);
+   		date_line_button.button_obj.GetComponent<Button>().onClick.AddListener(CustomButton_onClick);    	
+   		wall_button = new VRButton(canvas_for_movies.transform, new Vector3(-240, 200f - 1 * 34f, 0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Walls", arial);
+   		wall_button.button_obj.GetComponent<Button>().onClick.AddListener(wall_onClick); 
+
+   		wall_mini_button = new VRButton(canvas_for_movies.transform, new Vector3(-240, 200f - 2 * 34f, 0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Walls on Mini Map", arial);
+   		wall_mini_button.button_obj.GetComponent<Button>().onClick.AddListener(mini_wall_onClick);
+   		// slider.GetComponent()
 
         year_buttons = new VRButton[16];
         for(int i = 0; i < 16; ++i){
@@ -534,6 +600,28 @@ public class cube_generator : MonoBehaviour
                 month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color, "Hide All", arial);
         		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 12; ++j){dm.show_months[j] = false;}});  		
+        	}
+        }
+
+        movie_buttons = new VRButton[13];
+        for(int i = 0; i < 13; ++ i){
+        	if(i < 10){
+        		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+        			dm.movie_colors[i], normal_hl_color, normal_off_color, title_short[i], arial);
+        		int index = i;
+        		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>movie_onClick(index));
+        	}else if(i == 10){
+        		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+        			dm.movie_colors[i], normal_hl_color, normal_off_color, "Sum & news", arial);
+        		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>movie_onClick(10));
+        	}else if(i == 11){
+          		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color, "Show All", arial);
+        		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 11; ++j){dm.show_movies[j] = true;}});      		
+        	}else{
+                movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+        			normal_on_color, normal_hl_color, normal_off_color, "Hide All", arial);
+        		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 11; ++j){dm.show_movies[j] = false;}});  		
         	}
         }
 
@@ -623,7 +711,32 @@ public class cube_generator : MonoBehaviour
         rectTransform_lable_mini_pointer.sizeDelta = new Vector2(160,100);
         label_mini_pointer_line = new GameObject();
         label_mini_pointer_line = generate_line(new Vector3(0,0.1f,0), new Vector3(0,0.285f,0), Color.black);
-        label_mini_pointer_line.transform.SetParent(label_mini_pointer.transform);
+        label_mini_pointer_line.transform.SetParent(label_mini_pointer.transform);        
+
+
+
+
+        label_scale_pointer = GameObject.Find("LabelScalePointer");
+        label_scale_pointer.SetActive(false);
+        label_scale_pointer_text = new GameObject();
+        label_scale_pointer_text.AddComponent<Text>();
+        label_scale_pointer_text.GetComponent<Text>().text = "Jan. 31. 2005";        
+        label_scale_pointer_text.GetComponent<Text>().font = arial;
+        label_scale_pointer_text.GetComponent<Text>().fontSize = 48;
+        label_scale_pointer_text.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        label_scale_pointer_text.GetComponent<Text>().color = Color.white;
+        label_scale_pointer_text.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+        label_scale_pointer_text.transform.SetParent(label_scale_pointer.transform);
+        RectTransform rectTransform_lable_scale_pointer;
+
+        rectTransform_lable_scale_pointer = label_scale_pointer_text.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_lable_scale_pointer.localPosition = new Vector3(0, 0, 0);
+        rectTransform_lable_scale_pointer.localScale = new Vector3(0.001f,0.001f,0.001f);
+        rectTransform_lable_scale_pointer.sizeDelta = new Vector2(480,300);
+        label_scale_pointer_line = new GameObject();
+        label_scale_pointer_line = generate_line(new Vector3(0,0.1f,0), new Vector3(0,1.685f,0), Color.black);
+        label_scale_pointer_line.SetActive (false);
+
             
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().c_out);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().index[0]);
@@ -646,7 +759,7 @@ public class cube_generator : MonoBehaviour
         // Debug.Log("2006/2 angle:"+ dm.getData(0,2006,5,1).angle_radians * Mathf.Rad2Deg);
         // Debug.Log("2006/2 angle:"+ dm.getData(0,2006,8,1).angle_radians * Mathf.Rad2Deg);
         // Debug.Log("2006/2 angle:"+ dm.getData(0,2006,11,1).angle_radians * Mathf.Rad2Deg);
-
+        hover_label_news.SetActive(false);
     }
 
     // Update is called once per frame
@@ -655,8 +768,28 @@ public class cube_generator : MonoBehaviour
         local_date.SetActive(false);
         year_this.SetActive(false);
         year_next.SetActive(false);
-
-
+        scale_mode = false;
+        Debug.Log(slider.GetComponent<Slider>().value);
+        if(slider.GetComponent<Slider>().value < 0.95f){
+        	world_scaler.transform.localScale = new Vector3( 0.1f + 0.2f * slider.GetComponent<Slider>().value, 
+        		0.1f + 0.2f * slider.GetComponent<Slider>().value, 
+        		0.1f + 0.2f * slider.GetComponent<Slider>().value);
+        	scale_mode = true;
+        	if(pre_status == 0){
+        		position_buffer = base_world.transform.position;
+        		rotation_buffer = base_world.transform.rotation;
+        		teleporter.ForceTeleport(new Vector3(0,0,0),Quaternion.Euler(new Vector3(0, 0, 0)));
+        		has_scale_teleported = false;
+        	}
+        	pre_status = 1;
+        }else{
+        	world_scaler.transform.localScale = new Vector3(1f,1f,1f);
+        	if(pre_status == 1 && !has_scale_teleported){
+        		teleporter.ForceTeleport(position_buffer,rotation_buffer);
+        	}
+        	pre_status = 0;
+        }
+        
 
 
         if (left_controller.GetComponent<VRTK_ControllerEvents>().gripPressed)
@@ -674,7 +807,7 @@ public class cube_generator : MonoBehaviour
         }
 
         hover_label_movie.SetActive(false);
-        hover_label_news.SetActive(false);
+
         // Debug.Log("base:"+base_world.transform.position);
         int current_year = 0;
         int current_month = 0;
@@ -695,8 +828,8 @@ public class cube_generator : MonoBehaviour
         real_polar_angle = Mathf.Atan2(base_world.transform.position.x, base_world.transform.position.z) * Mathf.Rad2Deg;
         if(real_polar_angle < 0){real_polar_angle += 360;}
         // Debug.Log("angle: " + pos_polar_angle);
-        if(current_year != 0){
-            hover_label_news.SetActive(true);
+        if(current_year != 0 && !scale_mode ){
+            // hover_label_news.SetActive(true);
             local_date.SetActive(true);
             if(real_polar_angle >= dm.getData(0,current_year,12,1).angle_radians * Mathf.Rad2Deg)
             {
@@ -889,6 +1022,7 @@ public class cube_generator : MonoBehaviour
 
                     dm.MovieObjs[mv].years[y].months[m].mini_month_data_line.SetActive(dm.show_months[m]);  // mini graphic
                     dm.MovieObjs[mv].mini_date_lines_month[m].SetActive(dm.show_months[m]&&dm.show_date_lines);
+                    dm.MovieObjs[mv].years[y].months[m].mini_month_data_wall.SetActive(dm.show_months[m]&&dm.show_wall_mini);
                     if(m < 11)
                     {
                         // if next month won't be drawn
@@ -897,6 +1031,7 @@ public class cube_generator : MonoBehaviour
                             dm.MovieObjs[mv].years[y].months[m].connection_to_next.SetActive(dm.show_months[m+1]);
                             dm.MovieObjs[mv].years[y].months[m].connection_to_next_wall.SetActive(dm.show_months[m+1]);
                             dm.MovieObjs[mv].years[y].months[m].mini_connection_to_next.SetActive(dm.show_months[m+1]);
+                            dm.MovieObjs[mv].years[y].months[m].mini_connection_to_next_wall.SetActive(dm.show_months[m+1]);
                         }else{
                             dm.MovieObjs[mv].years[y].months[m].connection_to_next.SetActive(dm.show_months[m]);
                             dm.MovieObjs[mv].years[y].months[m].mini_connection_to_next.SetActive(dm.show_months[m]);
@@ -905,6 +1040,13 @@ public class cube_generator : MonoBehaviour
                                 dm.MovieObjs[mv].years[y].months[m].connection_to_next_wall.SetActive(true);
                             }else{
                                 dm.MovieObjs[mv].years[y].months[m].connection_to_next_wall.SetActive(false);
+                            }
+
+                            if(dm.show_months[m] && dm.show_wall_mini)
+                            {
+                                dm.MovieObjs[mv].years[y].months[m].mini_connection_to_next_wall.SetActive(true);
+                            }else{
+                                dm.MovieObjs[mv].years[y].months[m].mini_connection_to_next_wall.SetActive(false);
                             }
                         }
                     }
@@ -920,10 +1062,12 @@ public class cube_generator : MonoBehaviour
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next.SetActive(false); 
                         dm.MovieObjs[mv].years[y].months[11].mini_connection_to_next.SetActive(false); 
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next_wall.SetActive(false); 
+                        dm.MovieObjs[mv].years[y].months[11].mini_connection_to_next_wall.SetActive(false); 
                     }else{
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next.SetActive(dm.show_months[11]);
                         dm.MovieObjs[mv].years[y].months[11].mini_connection_to_next.SetActive(dm.show_months[11]);
                         dm.MovieObjs[mv].years[y].months[11].connection_to_next_wall.SetActive(dm.show_wall);  
+                        dm.MovieObjs[mv].years[y].months[11].mini_connection_to_next_wall.SetActive(dm.show_wall_mini);  
                     }
                 }
            }
@@ -979,13 +1123,49 @@ public class cube_generator : MonoBehaviour
         /*************************************************
             menu updates
         *************************************************/
-        color_buffer = b.colors;
+        color_buffer = date_line_button.button_obj.GetComponent<Button>().colors;
         if(dm.show_date_lines){
-            color_buffer.normalColor = Color.green;
+            color_buffer.normalColor = date_line_button.on_color;
         }else{
-            color_buffer.normalColor = Color.red;
+            color_buffer.normalColor = date_line_button.off_color;
         };
-        b.colors = color_buffer;
+        date_line_button.button_obj.GetComponent<Button>().colors = color_buffer;   
+
+		color_buffer = wall_button.button_obj.GetComponent<Button>().colors;
+        if(dm.show_wall){
+            color_buffer.normalColor = wall_button.on_color;
+        }else{
+            color_buffer.normalColor = wall_button.off_color;
+        };
+        wall_button.button_obj.GetComponent<Button>().colors = color_buffer; 
+
+       	color_buffer = wall_mini_button.button_obj.GetComponent<Button>().colors;
+        if(dm.show_wall_mini){
+            color_buffer.normalColor = wall_mini_button.on_color;
+        }else{
+            color_buffer.normalColor = wall_mini_button.off_color;
+        };
+        wall_mini_button.button_obj.GetComponent<Button>().colors = color_buffer;        
+
+        for(int i = 0; i < 12; ++i){
+        	color_buffer = month_buttons[i].button_obj.GetComponent<Button>().colors;
+        	if(dm.show_months[i]){
+	            color_buffer.normalColor = month_buttons[i].on_color;
+	        }else{
+	            color_buffer.normalColor = month_buttons[i].off_color;
+	        }
+	        month_buttons[i].button_obj.GetComponent<Button>().colors = color_buffer;
+        }
+
+        for(int i = 0; i < 14; ++i){
+        	color_buffer = year_buttons[i].button_obj.GetComponent<Button>().colors;
+        	if(dm.show_years[i]){
+	            color_buffer.normalColor = year_buttons[i].on_color;
+	        }else{
+	            color_buffer.normalColor = year_buttons[i].off_color;
+	        }
+	        year_buttons[i].button_obj.GetComponent<Button>().colors = color_buffer;
+        }
 
 
         /*************************************************
@@ -993,6 +1173,8 @@ public class cube_generator : MonoBehaviour
         *************************************************/
         // dm.mini_object.transform.SetParent(mini_map.transform, true);
         label_mini_pointer.SetActive(false);
+        label_scale_pointer.SetActive(false);
+        label_scale_pointer_line.SetActive(false);
         // the location of player marker on the mini map will reflect player's location in the world coordinate.
         // player_marker.transform.localPosition = new Vector3(player_world.transform.position.x/60f,
         //     5f,
@@ -1076,8 +1258,8 @@ public class cube_generator : MonoBehaviour
                 }
                 
                 // Debug.Log("!!!!!");
-            };
-            if(hit.transform.gameObject.CompareTag("news_node")){
+            }else if(hit.transform.gameObject.CompareTag("news_node")){
+            	hover_label_news.SetActive(true);
                 hover_label_news.transform.localPosition = new Vector3(
                     hit.transform.gameObject.transform.position.x,
                     hit.transform.gameObject.transform.position.y,
@@ -1124,7 +1306,7 @@ public class cube_generator : MonoBehaviour
                  base_world.transform.rotation.eulerAngles.y, 0);
                 hover_label_news_num.GetComponent<RectTransform>().localPosition = new Vector3(-0.2f,0f,-0.01f);
                 hover_label_news_date.GetComponent<RectTransform>().localPosition = new Vector3(-0.2f,0.18f,-0.01f);
-                Debug.Log("height"+hover_label_news.transform.localPosition.y);
+                // Debug.Log("height"+hover_label_news.transform.localPosition.y);
 
                 // hover_label_news_title.GetComponent<RectTransform>().sizeDelta = new Vector3(0.608f,0f,-0.01f);
                 // if(hm.years[hit.transform.gameObject.GetComponent<InfoCube>().yb].months[hit.transform.gameObject.GetComponent<InfoCube>().mb].day_list[hit.transform.gameObject.GetComponent<InfoCube>().db].data_list[hit.transform.gameObject.GetComponent<InfoCube>().id].movie_index.Count > 1){
@@ -1166,8 +1348,7 @@ public class cube_generator : MonoBehaviour
                 // }
                 
                 // Debug.Log("!!!!!");
-            };
-            if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
+            }else if(GameObject.ReferenceEquals(hit.transform.gameObject, mini_map))
             {
                 hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(hit.point);
                 label_mini_pointer.transform.localPosition = new Vector3(hit_point.transform.position.x, 0.2f ,hit_point.transform.position.z);
@@ -1243,15 +1424,35 @@ public class cube_generator : MonoBehaviour
                     if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
                     {
                         teleporter.ForceTeleport(new Vector3(hit_point.transform.position.x * 333f * 0.6f, 0, hit_point.transform.position.z * 333f * 0.6f),Quaternion.Euler(new Vector3(0, 0, 0)));
-                        // teleporter.ForceTeleport(new Vector3(30, 0, 0),Quaternion.Euler(new Vector3(0, 0, 0)));
+                        world_scaler.transform.localScale = new Vector3(1f,1f,1f);
+                        slider.GetComponent<Slider>().value = 1f;
                     }
                 }
-            }else{
-                // label_mini_pointer.SetActive(false);
+            }else if(scale_mode){
+            	if(GameObject.ReferenceEquals(hit.transform.gameObject, floor)){
+            		 dist_scale = Vector3.Distance(new Vector3(0,0,0), hit.point);
+
+            		label_scale_pointer.SetActive(true);
+            		label_scale_pointer_line.SetActive(true);
+            		label_scale_pointer.transform.localPosition = new Vector3(hit.point.x,hit.point.y+1.7f,hit.point.z);
+            		label_scale_pointer_line.transform.localPosition = new Vector3(hit.point.x,0,hit.point.z);
+            		label_scale_pointer.transform.localRotation = Quaternion.Euler(60f * (label_scale_pointer.transform.localPosition.y - 1.7f) / (1.7f - 4.9f),
+                 base_world.transform.rotation.eulerAngles.y, 0);
+            		if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+                    {
+                        teleporter.ForceTeleport(hit.point / (0.1f + 0.2f * slider.GetComponent<Slider>().value),Quaternion.Euler(new Vector3(0, 0, 0)));
+                        has_scale_teleported = true;
+                        world_scaler.transform.localScale = new Vector3(1f,1f,1f);
+                        slider.GetComponent<Slider>().value = 1f;
+                    }
+            	}
             }
         }
         
-
+        if (left_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+        {
+           	hover_label_news.SetActive(false);
+        }
 
 
         // if(current_year != 0){
@@ -1354,10 +1555,75 @@ public class cube_generator : MonoBehaviour
         return output;
     }
 
+    public void drawMarker(GameObject g, Color c){
+        Vector3[] vertices = new Vector3[6];
+        int [] triangles = new int[24];
+        vertices[0] = new Vector3(0,-0.04f,0);
+        vertices[1] = new Vector3(0.005f,0.01f,0.005f);        
+        vertices[2] = new Vector3(0.005f,0.01f, -0.005f);        
+        vertices[3] = new Vector3(-0.005f,0.01f, -0.005f);
+        vertices[4] = new Vector3(-0.005f,0.01f,0.005f);
+        vertices[5] = new Vector3(0,0.03f,0);
+
+
+        triangles[0] = 0;
+        triangles[1] = 1;
+        triangles[2] = 2;
+        triangles[3] = 0;
+        triangles[4] = 2;
+        triangles[5] = 3;
+        triangles[6] = 0;
+        triangles[7] = 3;
+        triangles[8] = 4;
+        triangles[9] = 0;
+        triangles[10] = 4;
+        triangles[11] = 1;
+        triangles[12] = 5;
+        triangles[13] = 1;
+        triangles[14] = 2;
+        triangles[15] = 5;
+        triangles[16] = 2;
+        triangles[17] = 3;
+        triangles[18] = 5;
+        triangles[19] = 3;
+        triangles[20] = 4;
+        triangles[21] = 5;
+        triangles[22] = 4;
+        triangles[23] = 1;
+
+        Mesh mesh_marker = new Mesh();
+
+        Material material_marker = new Material(Shader.Find("Custom/Standard2Sided"));; 
+
+        mesh_marker.vertices = vertices;
+        // mesh.uv = uv;
+        mesh_marker.triangles = triangles;
+        // material.SetFloat("_Mode", 3f);
+        StandardShaderUtils.ChangeRenderMode(material_marker, StandardShaderUtils.BlendMode.Transparent);
+        material_marker.color = c;
+        // Debug.Log("!");
+        g.GetComponent<MeshFilter>().mesh = mesh_marker;
+        g.GetComponent<MeshRenderer>().material = material_marker;
+    }
 
     void CustomButton_onClick()
     {
         dm.show_date_lines = !dm.show_date_lines;
+        if(dm.show_date_lines && dm.show_wall){
+        	dm.show_wall = false;
+        }
+    }    
+
+    void wall_onClick()
+    {
+        dm.show_wall = !dm.show_wall;
+        if(dm.show_date_lines && dm.show_wall){
+        	dm.show_date_lines = false;
+        }
+    }    
+    void mini_wall_onClick()
+    {
+        dm.show_wall_mini = !dm.show_wall_mini;
     }
 
     void month_onClick(int i)
@@ -1367,5 +1633,9 @@ public class cube_generator : MonoBehaviour
     void year_onClick(int i)
     {
         dm.show_years[i] = !dm.show_years[i];
+    }    
+    void movie_onClick(int i)
+    {
+        dm.show_movies[i] = !dm.show_movies[i];
     }
 }

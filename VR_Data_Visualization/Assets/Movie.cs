@@ -42,9 +42,10 @@ public class Movie
         line_renderer.material = material;
         line_renderer.widthMultiplier = LINE_WIDTH;
         line_renderer.positionCount = nodes.Count;
+        line_renderer.useWorldSpace = false;
         line_renderer.startColor = c;
         line_renderer.endColor = c;
-        line_renderer.sortingOrder=1;
+        // line_renderer.sortingOrder=1;
         for(int i = 0; i < nodes.Count; ++i){
             line_renderer.SetPosition(i, nodes[i]);
         }
