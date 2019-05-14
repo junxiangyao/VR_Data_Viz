@@ -149,6 +149,8 @@ public class cube_generator : MonoBehaviour
 
 
         *****************************************/
+        QualitySettings.antiAliasing = 20;
+
         int counter = 0;  
         string line;  
 
