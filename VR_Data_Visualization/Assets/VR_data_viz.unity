@@ -12218,11 +12218,11 @@ PrefabInstance:
     - target: {fileID: 114676128360407342, guid: 3d56870ea5ab696448e35ecae56a6c5e,
         type: 3}
       propertyPath: m_Text
-      value: 'Interactions can be extended to include additional helpful options such
-        as radial menus, panel menus, tooltips and Unity UI.
-
-
-        Teleport to the stations to try out some of these useful helpers.'
+      value: "This project is an analysis of the Star Wars check-out history at the
+        Seattle Public Library. The check-out data were retreived using the titles
+        of the ten movies and the word \"star wars\" as the keyowrds. Also, the local
+        news\r data on corresponding dates were collected from the Seattle Times and
+        added to the visualization.\n"
       objectReference: {fileID: 0}
     - target: {fileID: 114676128360407342, guid: 3d56870ea5ab696448e35ecae56a6c5e,
         type: 3}
@@ -12248,6 +12248,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Color.b
       value: 0.13207549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114895536319132594, guid: 3d56870ea5ab696448e35ecae56a6c5e,
+        type: 3}
+      propertyPath: m_Text
+      value: <b>Visualizing Time-Oriented Data in Virtual Reality</b>
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d56870ea5ab696448e35ecae56a6c5e, type: 3}
@@ -21712,7 +21717,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1534717983
 Transform:
   m_ObjectHideFlags: 0

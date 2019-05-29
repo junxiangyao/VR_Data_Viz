@@ -423,7 +423,7 @@ public class cube_generator : MonoBehaviour
         hover_label_movie.GetComponent<Canvas>().sortingOrder = 2;
         hover_label_movie_num = new GameObject();
         hover_label_movie_num.AddComponent<Text>();
-        hover_label_movie_num.GetComponent<Text>().text = "0";        
+        hover_label_movie_num.GetComponent<Text>().text = "Check-out       \n Times";        
         hover_label_movie_num.GetComponent<Text>().font = arial;
         hover_label_movie_num.GetComponent<Text>().fontSize = 32;
         hover_label_movie_num.GetComponent<Text>().fontStyle = FontStyle.Normal;
@@ -435,11 +435,12 @@ public class cube_generator : MonoBehaviour
         rectTransform_num = hover_label_movie_num.GetComponent<Text>().GetComponent<RectTransform>();
         rectTransform_num.localPosition = new Vector3(-0.1f,0f,-0.01f);
         rectTransform_num.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
-        rectTransform_num.sizeDelta = new Vector2(160,100);
+        rectTransform_num.sizeDelta = new Vector2(100,100);
  
         hover_label_movie_date = new GameObject();
         hover_label_movie_date.AddComponent<Text>();
-        hover_label_movie_date.GetComponent<Text>().text = "Date";        
+        hover_label_movie_date.GetComponent<Text>().text = "Date         ";   
+        												// "Jan.21.2005"		     
         hover_label_movie_date.GetComponent<Text>().font = arial;
         hover_label_movie_date.GetComponent<Text>().fontSize = 12;
         hover_label_movie_date.GetComponent<Text>().fontStyle = FontStyle.Normal;
@@ -456,7 +457,7 @@ public class cube_generator : MonoBehaviour
 
         hover_label_movie_name = new GameObject();
         hover_label_movie_name.AddComponent<Text>();
-        hover_label_movie_name.GetComponent<Text>().text = "Movie Title";        
+        hover_label_movie_name.GetComponent<Text>().text = "  Movie Title";        
         hover_label_movie_name.GetComponent<Text>().font = arial;
         hover_label_movie_name.GetComponent<Text>().fontSize = 16;
         hover_label_movie_name.GetComponent<Text>().fontStyle = FontStyle.Normal;
@@ -475,9 +476,9 @@ public class cube_generator : MonoBehaviour
         hover_label_news.GetComponent<Canvas>().sortingOrder = 2;
         hover_label_news_num = new GameObject();
         hover_label_news_num.AddComponent<Text>();
-        hover_label_news_num.GetComponent<Text>().text = "0";        
+        hover_label_news_num.GetComponent<Text>().text = "The overall check-out times of all the \"Star Wars\" items.";        
         hover_label_news_num.GetComponent<Text>().font = arial;
-        hover_label_news_num.GetComponent<Text>().fontSize = 32;
+        hover_label_news_num.GetComponent<Text>().fontSize = 10;
         hover_label_news_num.GetComponent<Text>().fontStyle = FontStyle.Normal;
         hover_label_news_num.GetComponent<Text>().color = Color.white;
         hover_label_news_num.GetComponent<Text>().alignment = TextAnchor.MiddleRight;
@@ -491,7 +492,7 @@ public class cube_generator : MonoBehaviour
         
         hover_label_news_date = new GameObject();
         hover_label_news_date.AddComponent<Text>();
-        hover_label_news_date.GetComponent<Text>().text = "Jan.31.2005";        
+        hover_label_news_date.GetComponent<Text>().text = "Date";        
         hover_label_news_date.GetComponent<Text>().font = arial;
         hover_label_news_date.GetComponent<Text>().fontSize = 12;
         hover_label_news_date.GetComponent<Text>().fontStyle = FontStyle.Normal;
@@ -507,9 +508,9 @@ public class cube_generator : MonoBehaviour
 
         hover_label_news_title = new GameObject();
         hover_label_news_title.AddComponent<Text>();
-        hover_label_news_title.GetComponent<Text>().text = "Star Wars VIIIasdfh ajsdhf oaijsdfasdi jiasdjfa oiasdjfaksdjalg jsdv  jss hsaa jiajs jijj bingzhe 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679";        
+        hover_label_news_title.GetComponent<Text>().text = "The news titles were collected from the Seattle Times. They were the results of searching \"Star wars\" and \" Seattle Public Library\" in the search engine from the Seattle Times. \nPress the left trigger to hide this panel.";        
         hover_label_news_title.GetComponent<Text>().font = arial;
-        hover_label_news_title.GetComponent<Text>().fontSize = 16;
+        hover_label_news_title.GetComponent<Text>().fontSize = 14;
         hover_label_news_title.GetComponent<Text>().fontStyle = FontStyle.Normal;
         hover_label_news_title.GetComponent<Text>().color = Color.white;
         hover_label_news_title.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
@@ -1153,7 +1154,6 @@ public class cube_generator : MonoBehaviour
         }
 
         if(current_year != 0 || dist_real < dm.getData(0,2005,1,1).radius){
-        	Debug.Log("rediculous" + hm.years[0].months[0].should_draw);
             for(int y = 0; y < 14; ++y){
                 hm.years[y].year_obj.SetActive(dm.show_years[y]);
                 for(int m = 0; m < 12; ++m){
@@ -1286,6 +1286,8 @@ public class cube_generator : MonoBehaviour
             // Debug.Log("+++" + hit.transform.gameObject);
             if(hit.transform.gameObject.CompareTag("data_node")){
                 hover_label_movie.SetActive(true);
+        		hover_label_movie_num.GetComponent<Text>().fontSize = 32;
+        		hover_label_movie_date.GetComponent<Text>().fontSize = 12;
                 hover_label_movie.transform.localPosition = new Vector3(
                     hit.transform.gameObject.transform.position.x,
                     hit.transform.gameObject.transform.position.y,
@@ -1340,6 +1342,8 @@ public class cube_generator : MonoBehaviour
                 // Debug.Log("!!!!!");
             }else if(hit.transform.gameObject.CompareTag("news_node")){
             	hover_label_news.SetActive(true);
+            	hover_label_news_num.GetComponent<Text>().fontSize = 32;
+            	hover_label_news_title.GetComponent<Text>().fontSize = 16;
                 hover_label_news.transform.localPosition = new Vector3(
                     hit.transform.gameObject.transform.position.x,
                     hit.transform.gameObject.transform.position.y,
@@ -1603,12 +1607,21 @@ public class cube_generator : MonoBehaviour
                     hit.transform.gameObject.transform.position.x,
                     hit.transform.gameObject.transform.position.y,
                     hit.transform.gameObject.transform.position.z);
+                // hover_label_news_num.GetComponent<Text>().fontSize = 12;
+                hover_label_movie_num.GetComponent<Text>().fontSize = 12;
                 hover_label_movie.transform.localRotation = Quaternion.Euler(0, base_world.transform.rotation.eulerAngles.y, 0);
                 hover_label_movie.transform.localPosition = hover_label_movie.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
                 hover_label_movie.GetComponent<Image>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
 
-                hover_label_movie_num.GetComponent<Text>().text = "" +  hit.transform.gameObject.GetComponent<InfoCube>().c_out;
-                hover_label_movie_num.GetComponent<Text>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
+                // hover_label_movie_num.GetComponent<Text>().text = "" +  hit.transform.gameObject.GetComponent<InfoCube>().c_out;
+                // hover_label_movie_num.GetComponent<Text>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
+            }else if(GameObject.ReferenceEquals(hit.transform.gameObject, example_cube)){
+            	hover_label_news.SetActive(true);
+                hover_label_news.transform.localPosition = new Vector3(
+                    hit.transform.gameObject.transform.position.x,
+                    hit.transform.gameObject.transform.position.y,
+                    hit.transform.gameObject.transform.position.z);
+                hover_label_news.transform.localPosition = hover_label_news.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
             }
         }
         
