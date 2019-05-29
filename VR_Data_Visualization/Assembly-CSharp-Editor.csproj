@@ -69,6 +69,7 @@
      <Compile Include="Assets\DestPrimitives\Source\Primitives\Editor\TorusEditor.cs" />
      <Compile Include="Assets\DestPrimitives\Source\Primitives\Editor\TubeEditor.cs" />
      <Compile Include="Assets\DestPrimitives\Source\Primitives\Editor\WireBoxEditor.cs" />
+     <Compile Include="Assets\Editor\Instant Screenshot\ScreenshotTaker.cs" />
      <Compile Include="Assets\Oculus\AudioManager\Scripts\Audio\Editor\AudioImportPostProcessor.cs" />
      <Compile Include="Assets\Oculus\AudioManager\Scripts\Audio\Editor\AudioManagerInspector.cs" />
      <Compile Include="Assets\Oculus\AudioManager\Scripts\Audio\Editor\MinMaxPropertyDrawer.cs" />

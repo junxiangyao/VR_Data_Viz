@@ -6,6 +6,7 @@ using UnityEngine;
 using static StandardShaderUtils;
 
 using static Day;
+using static MetaData;
 
 public class Month
 {
@@ -55,6 +56,7 @@ public class Month
         this.material_month = new Material(Shader.Find("Custom/Standard2Sided"));
         this.mesh_connect = new Mesh();
         this.material_connect = new Material(Shader.Find("Custom/Standard2Sided")); 
+        this.data = new MetaData();
 
         //for mini map
         this.mini_month_data_line = new GameObject();
@@ -72,6 +74,17 @@ public class Month
     {
         dayList.Add(day_obj);
     }
+
+    public void addMonthData(int cko)
+    {
+        this.data.check_out_times = cko;
+        this.data.position = this.dayList[14].data.position;
+        this.data.position.y = cko / 80f;
+        this.data.mini_position.x = this.data.position.x / 60f; //local to mini map
+        this.data.mini_position.y = this.data.position.y * 1.6f;
+        this.data.mini_position.z = this.data.position.z / 60f;
+    }
+
     // draw data, connect every node from the first to the last
     public void drawData(Color c, Material material){
         LineRenderer line_renderer = month_data_line.AddComponent<LineRenderer>();

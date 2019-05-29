@@ -139,6 +139,20 @@ public class cube_generator : MonoBehaviour
     Color normal_on_color;
     Color normal_hl_color;
     Color normal_off_color;
+    //Hint
+    GameObject right_trigger;
+    GameObject right_joy;
+    GameObject right_grip;
+    GameObject right_trigger_line;
+    GameObject right_joy_line;
+    GameObject right_grip_line;
+    GameObject left_grip;
+    GameObject left_grip_line;
+
+    GameObject example_sphere;
+    GameObject example_cube;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -149,7 +163,7 @@ public class cube_generator : MonoBehaviour
 
 
         *****************************************/
-        QualitySettings.antiAliasing = 20;
+        QualitySettings.antiAliasing = 100;
 
         int counter = 0;  
         string line;  
@@ -276,15 +290,25 @@ public class cube_generator : MonoBehaviour
             }
         }
         
-        // System.IO.StreamReader file_news_spl = new System.IO.StreamReader(@"Assets/seattle_times_news_spl.csv"); 
-        // while((line = file_news_spl.ReadLine()) != null)  
-        // {  
-        //     int[] splits = parseLine(line);
-        // }   
-        // file_news_spl.Close();
 
+        System.IO.StreamReader file_month = new System.IO.StreamReader(@"Assets/month_sw.csv");  
+        while((line = file_month.ReadLine()) != null)  
+        {  
 
+            //System.Console.WriteLine(line);
+            int[] splits = parseLine(line);
+            for(int movieIdx = 0 ; movieIdx < 12 ; movieIdx++)
+            {
+                dm.addMonthData(movieIdx,splits[0],splits[1],splits[2+movieIdx]);
+            }
 
+            // growing radius
+            current_radius += INCREASE;
+            //Debug.Log("object at year["+splits[0]+"], mon["+splits[1]+"], day["+splits[2]+"]");
+            counter++;  
+        }  
+
+        file.Close();
 
         //Test Boxes
         // Color c = new Color(0.75f,0.75f,0.75f);
@@ -415,7 +439,7 @@ public class cube_generator : MonoBehaviour
  
         hover_label_movie_date = new GameObject();
         hover_label_movie_date.AddComponent<Text>();
-        hover_label_movie_date.GetComponent<Text>().text = "Jan.31.2005";        
+        hover_label_movie_date.GetComponent<Text>().text = "Date";        
         hover_label_movie_date.GetComponent<Text>().font = arial;
         hover_label_movie_date.GetComponent<Text>().fontSize = 12;
         hover_label_movie_date.GetComponent<Text>().fontStyle = FontStyle.Normal;
@@ -432,7 +456,7 @@ public class cube_generator : MonoBehaviour
 
         hover_label_movie_name = new GameObject();
         hover_label_movie_name.AddComponent<Text>();
-        hover_label_movie_name.GetComponent<Text>().text = "Star Wars VIII";        
+        hover_label_movie_name.GetComponent<Text>().text = "Movie Title";        
         hover_label_movie_name.GetComponent<Text>().font = arial;
         hover_label_movie_name.GetComponent<Text>().fontSize = 16;
         hover_label_movie_name.GetComponent<Text>().fontStyle = FontStyle.Normal;
@@ -495,7 +519,7 @@ public class cube_generator : MonoBehaviour
         rectTransform_title = hover_label_news_title.GetComponent<Text>().GetComponent<RectTransform>();
         rectTransform_title.localPosition = new Vector3(0.604f,0f,-0.01f);
         rectTransform_title.transform.localScale = new Vector3(0.004f,0.004f,0.004f);
-        rectTransform_title.sizeDelta = new Vector2(300,1200);
+        rectTransform_title.sizeDelta = new Vector2(280,1200);
 
 
         ///////////////////////////////////////
@@ -520,6 +544,8 @@ public class cube_generator : MonoBehaviour
         // dm => mini_Object => mini_game_oject (movie) => mini_year => mini_month()
         dm.drawDateMini();
         dm.drawDataMini();
+        dm.drawMonthDataMini();
+        dm.drawMonthLineMini();
         dm.mini_object.transform.localPosition = new Vector3(0,1f,0);
         dm.mini_object.transform.SetParent(mini_map.transform, false);
 
@@ -528,7 +554,7 @@ public class cube_generator : MonoBehaviour
         // drawMarker(player_marker, new Color(255 * 1.0f/255, 204 * 1.0f/255, 0 * 1.0f/255));
         player_marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
         player_marker.transform.localScale = new Vector3(0.004f,0.1f,0.004f);
-        player_marker.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 204 * 1.0f/255, 0 * 1.0f/255);
+        player_marker.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
         player_marker.transform.SetParent(mini_map.transform);
         player_marker.transform.localPosition = new Vector3(0,5f,0); // impacted by the scaling of its parent
         hit_point = new GameObject();
@@ -545,14 +571,14 @@ public class cube_generator : MonoBehaviour
     	normal_hl_color  = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
     	normal_off_color = new Color(120 * 1.0f/255, 120 * 1.0f/255, 120 * 1.0f/255);
 
-    	date_line_button = new VRButton(canvas_for_movies.transform, new Vector3(-240, 200f - 0 * 34f, 0),
+    	date_line_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 0 * 34f, 0),
         			normal_on_color, normal_hl_color, normal_off_color,"Date Lines", arial);
    		date_line_button.button_obj.GetComponent<Button>().onClick.AddListener(CustomButton_onClick);    	
-   		wall_button = new VRButton(canvas_for_movies.transform, new Vector3(-240, 200f - 1 * 34f, 0),
+   		wall_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 1 * 34f, 0),
         			normal_on_color, normal_hl_color, normal_off_color,"Walls", arial);
    		wall_button.button_obj.GetComponent<Button>().onClick.AddListener(wall_onClick); 
 
-   		wall_mini_button = new VRButton(canvas_for_movies.transform, new Vector3(-240, 200f - 2 * 34f, 0),
+   		wall_mini_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 2 * 34f, 0),
         			normal_on_color, normal_hl_color, normal_off_color,"Walls on Mini Map", arial);
    		wall_mini_button.button_obj.GetComponent<Button>().onClick.AddListener(mini_wall_onClick);
    		// slider.GetComponent()
@@ -560,16 +586,16 @@ public class cube_generator : MonoBehaviour
         year_buttons = new VRButton[16];
         for(int i = 0; i < 16; ++i){
         	if(i < 14){
-        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
+        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-240,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color,"" + (2005 + i), arial);
         		int index = i;
         		year_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>year_onClick(index));
         	}else if(i == 14){
-        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
+        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-240,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color,"Show All", arial);
         		year_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 14; ++j){dm.show_years[j] = true;}});
         	}else{
-        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
+        		year_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-240,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color,"Hide All", arial);
         		year_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 14; ++j){dm.show_years[j] = false;}});
         	}
@@ -578,16 +604,16 @@ public class cube_generator : MonoBehaviour
         month_buttons = new VRButton[14];
         for(int i = 0; i < 14; ++i){
         	if(i < 12){
-        		month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
+        		month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color, month_text[i], arial);
         		int index = i;
         		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>month_onClick(index));
         	}else if(i == 12){
-          		month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
+          		month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color, "Show All", arial);
         		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 12; ++j){dm.show_months[j] = true;}});      		
         	}else{
-                month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(240,200f - i * 34f,0),
+                month_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color, "Hide All", arial);
         		month_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 12; ++j){dm.show_months[j] = false;}});  		
         	}
@@ -596,20 +622,20 @@ public class cube_generator : MonoBehaviour
         movie_buttons = new VRButton[13];
         for(int i = 0; i < 13; ++ i){
         	if(i < 10){
-        		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+        		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
         			dm.movie_colors[i], normal_hl_color, normal_off_color, title_short[i], arial);
         		int index = i;
         		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>movie_onClick(index));
         	}else if(i == 10){
-        		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+        		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
         			dm.movie_colors[i], normal_hl_color, normal_off_color, "Sum & news", arial);
         		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>movie_onClick(10));
         	}else if(i == 11){
-          		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+          		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color, "Show All", arial);
         		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 11; ++j){dm.show_movies[j] = true;}});      		
         	}else{
-                movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(-80,200f - i * 34f,0),
+                movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
         			normal_on_color, normal_hl_color, normal_off_color, "Hide All", arial);
         		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>{for(int j = 0; j < 11; ++j){dm.show_movies[j] = false;}});  		
         	}
@@ -727,7 +753,53 @@ public class cube_generator : MonoBehaviour
         label_scale_pointer_line = generate_line(new Vector3(0,0.1f,0), new Vector3(0,1.685f,0), Color.black);
         label_scale_pointer_line.SetActive (false);
 
-            
+		//################################################## HINT ######################################################   
+
+    	right_trigger = GameObject.Find("LabelTR");
+    	right_joy = GameObject.Find("LabelJR");
+    	right_grip = GameObject.Find("LabelGR");
+
+    	left_grip = GameObject.Find("LabelGL");
+    	left_grip.transform.SetParent(left_controller.transform);     	
+
+    	right_trigger.transform.SetParent(right_controller.transform); 
+    	right_joy.transform.SetParent(right_controller.transform); 
+    	right_grip.transform.SetParent(right_controller.transform);     
+
+    	right_trigger_line = new GameObject(); 
+    	right_joy_line = new GameObject(); 
+    	right_grip_line = new GameObject(); 
+
+
+    	left_grip_line = new GameObject(); 
+
+
+
+    	right_trigger.transform.localPosition = new Vector3(0.1f, -0.02f, 0.1f);
+    	right_joy.transform.localPosition = new Vector3(0.16f, 0.04f, 0.002f);
+    	right_grip.transform.localPosition = new Vector3(-0.16f, -0.03f, -0.1f);
+    	left_grip.transform.localPosition = new Vector3(0.16f, -0.03f, -0.1f);
+
+    	right_trigger_line = generate_line(new Vector3(0,-0.02f,0), new Vector3(0, -0.02f, 0.1f), Color.black);
+    	right_joy_line = generate_line(new Vector3(0.01f,0.01f,0.002f), new Vector3(0.06f, 0.04f, 0.002f), Color.black);
+    	right_grip_line = generate_line(new Vector3(0,-0.03f,-0.03f), new Vector3(-0.06f, -0.03f, -0.075f), Color.black);
+    	left_grip_line = generate_line(new Vector3(0,-0.03f,-0.03f), new Vector3(0.055f, -0.03f, -0.075f), Color.black);
+
+
+
+    	right_trigger_line.transform.SetParent(right_controller.transform); 
+    	right_joy_line.transform.SetParent(right_controller.transform); 
+    	right_grip_line.transform.SetParent(right_controller.transform); 
+    	left_grip_line.transform.SetParent(left_controller.transform); 
+
+    	example_cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+    	example_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    	example_cube.transform.localScale = new Vector3(0.04f,0.04f,0.04f);
+    	example_sphere.transform.localScale = new Vector3(0.04f,0.04f,0.04f);
+    	example_cube.GetComponent<Renderer>().material.color = Color.white;
+    	example_sphere.GetComponent<Renderer>().material.color = Color.black;
+    	example_cube.transform.localPosition = new Vector3(0.2f,1.6f,1f); 
+    	example_sphere.transform.localPosition = new Vector3(-0.2f,1.6f,1f); 
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().c_out);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().index[0]);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().c_out);
@@ -817,8 +889,16 @@ public class cube_generator : MonoBehaviour
         }
         real_polar_angle = Mathf.Atan2(base_world.transform.position.x, base_world.transform.position.z) * Mathf.Rad2Deg;
         if(real_polar_angle < 0){real_polar_angle += 360;}
-        // Debug.Log("angle: " + pos_polar_angle);
-        if(current_year != 0 && !scale_mode ){
+		if(dist_real < dm.getData(0,2005,1,1).radius && !scale_mode && hoverable){
+			        for(int y = 0; y < 2; ++y){
+						for(int m = 0; m < 12; ++m){
+							for(int d = 0; d < hm.years[y].months[m].day_list.Count;++d){
+								hm.years[y].months[m].day_list[d].daily_hover_obj.SetActive(true);
+							}
+							hm.years[y].months[m].should_draw = true;
+						}
+					}
+         }else if(current_year != 0 && !scale_mode ){
             // hover_label_news.SetActive(true);
             local_date.SetActive(true);
             if(real_polar_angle >= dm.getData(0,current_year,12,1).angle_radians * Mathf.Rad2Deg)
@@ -861,7 +941,7 @@ public class cube_generator : MonoBehaviour
             } 
 
             if(hoverable){
-                hm.unmute(current_year, current_month, current_day);
+            	hm.unmute(current_year, current_month, current_day);
             }else{
                 hm.muteAll();
             }
@@ -925,14 +1005,19 @@ public class cube_generator : MonoBehaviour
         {
             dm.show_wall = !dm.show_wall;
         }
-
         if (Input.GetKeyDown(KeyCode.M))
         {
-            // for(int mv = 0; mv < 12; ++mv)
-            // {
-                dm.show_movies[10] = !dm.show_movies[10]; 
-            // }
+            dm.show_month_mesh = !dm.show_month_mesh;
         }
+
+
+        // if (Input.GetKeyDown(KeyCode.M))
+        // {
+        //     // for(int mv = 0; mv < 12; ++mv)
+        //     // {
+        //         dm.show_movies[10] = !dm.show_movies[10]; 
+        //     // }
+        // }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             dm.show_movies[0] = !dm.show_movies[0]; 
@@ -997,6 +1082,10 @@ public class cube_generator : MonoBehaviour
             // show/ hide movie
             dm.MovieObjs[mv].game_object.SetActive(dm.show_movies[mv]);
             dm.MovieObjs[mv].mini_game_object.SetActive(dm.show_movies[mv]); 
+            dm.MovieObjs[mv].mini_month_object.SetActive(dm.show_month_mesh);
+            for(int a = 0; a < 12; ++a){
+            	dm.MovieObjs[mv].mini_month_lines[a].SetActive(dm.show_months[a] && dm.show_date_lines);
+            }
             for(int y = 0; y < 14; ++y)
             {
                 // show / hide year
@@ -1063,7 +1152,8 @@ public class cube_generator : MonoBehaviour
            }
         }
 
-        if(current_year != 0){
+        if(current_year != 0 || dist_real < dm.getData(0,2005,1,1).radius){
+        	Debug.Log("rediculous" + hm.years[0].months[0].should_draw);
             for(int y = 0; y < 14; ++y){
                 hm.years[y].year_obj.SetActive(dm.show_years[y]);
                 for(int m = 0; m < 12; ++m){
@@ -1259,7 +1349,7 @@ public class cube_generator : MonoBehaviour
                 if(hit.transform.gameObject.GetComponent<InfoCube>().c_out > 0){
                     hover_label_news_num.GetComponent<Text>().text = "sum" +  hit.transform.gameObject.GetComponent<InfoCube>().c_out;
                 }else{
-                    hover_label_news_num.GetComponent<Text>().text = "" + 0;
+                    hover_label_news_num.GetComponent<Text>().text = "sum" + 0;
                     hover_label_news_num.GetComponent<Text>().GetComponent<RectTransform>().transform.localPosition = new Vector3(-0.2f,0.1f,-0.01f);
                 }
                 
@@ -1272,16 +1362,22 @@ public class cube_generator : MonoBehaviour
                     hover_label_news_title.GetComponent<Text>().text = "N/A";
                     hover_label_news_title.GetComponent<RectTransform>().localPosition = new Vector3(1.008f,0f,-0.01f);
                 }else{
+                	if(n_buffer.news_sw.Count > 0){
+                		hover_label_news_title.GetComponent<Text>().text += "\"Star Wars\"\n";
+                	}
                     for(int i = 0; i < n_buffer.news_sw.Count; ++i){
                         hover_label_news_title.GetComponent<Text>().text += "- " + n_buffer.news_sw[i] + "\n";
                     }
                     if(n_buffer.news_sw.Count > 0 && n_buffer.news_spl.Count > 0){
-                        hover_label_news_title.GetComponent<Text>().text += "------------------------------------------------------------\n";
+                        hover_label_news_title.GetComponent<Text>().text += "------------------------------------------------------\n";
                     }
+                    if(n_buffer.news_spl.Count > 0){
+                		hover_label_news_title.GetComponent<Text>().text += "\"Seattle Public Library\"\n";
+                	}
                     for(int i = 0; i < n_buffer.news_spl.Count; ++i){
                         hover_label_news_title.GetComponent<Text>().text += "- " + n_buffer.news_spl[i] + "\n";
                     }
-                    hover_label_news_title.GetComponent<RectTransform>().localPosition = new Vector3(0.608f,0f,-0.01f);
+                    hover_label_news_title.GetComponent<RectTransform>().localPosition = new Vector3(0.608f, 0,-0.01f);
                 }
 
                 if(n_buffer.news_count > 2){
@@ -1501,6 +1597,18 @@ public class cube_generator : MonoBehaviour
 	                    }
             		}
             	}
+            }else if(GameObject.ReferenceEquals(hit.transform.gameObject, example_sphere)){
+            	hover_label_movie.SetActive(true);
+                hover_label_movie.transform.localPosition = new Vector3(
+                    hit.transform.gameObject.transform.position.x,
+                    hit.transform.gameObject.transform.position.y,
+                    hit.transform.gameObject.transform.position.z);
+                hover_label_movie.transform.localRotation = Quaternion.Euler(0, base_world.transform.rotation.eulerAngles.y, 0);
+                hover_label_movie.transform.localPosition = hover_label_movie.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
+                hover_label_movie.GetComponent<Image>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
+
+                hover_label_movie_num.GetComponent<Text>().text = "" +  hit.transform.gameObject.GetComponent<InfoCube>().c_out;
+                hover_label_movie_num.GetComponent<Text>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
             }
         }
         
@@ -1564,7 +1672,8 @@ public class cube_generator : MonoBehaviour
         LineRenderer line_renderer = line.AddComponent<LineRenderer>();
         line_renderer.material = new Material(Shader.Find("Sprites/Default"));
         line_renderer.widthMultiplier = 0.002f;
-        line_renderer.sortingOrder = 1;
+        // line_renderer.widthMultiplier = 2f;
+        line_renderer.sortingOrder = 10;
         line_renderer.positionCount = 2;
         line_renderer.useWorldSpace = false;
         line_renderer.startColor = color;

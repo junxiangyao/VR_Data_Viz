@@ -41,7 +41,7 @@ public class HoverObject
 	}
 
 	public void drawCube(){
-        hover_obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        hover_obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         hover_obj.AddComponent<InfoCube>();
         hover_obj.GetComponent<InfoCube>().c_out = check_out;
         hover_obj.GetComponent<InfoCube>().index = movie_index;        
