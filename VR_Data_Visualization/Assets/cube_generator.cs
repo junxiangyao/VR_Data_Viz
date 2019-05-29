@@ -136,6 +136,7 @@ public class cube_generator : MonoBehaviour
     VRButton date_line_button;
     VRButton wall_button;
     VRButton wall_mini_button;
+    VRButton month_mesh_button;
     Color normal_on_color;
     Color normal_hl_color;
     Color normal_off_color;
@@ -573,15 +574,21 @@ public class cube_generator : MonoBehaviour
     	normal_off_color = new Color(120 * 1.0f/255, 120 * 1.0f/255, 120 * 1.0f/255);
 
     	date_line_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 0 * 34f, 0),
-        			normal_on_color, normal_hl_color, normal_off_color,"Date Lines", arial);
-   		date_line_button.button_obj.GetComponent<Button>().onClick.AddListener(CustomButton_onClick);    	
+        			normal_on_color, normal_hl_color, normal_off_color,"Date-Connecting Lines", arial);
+   		date_line_button.button_obj.GetComponent<Button>().onClick.AddListener(CustomButton_onClick);
+
    		wall_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 1 * 34f, 0),
         			normal_on_color, normal_hl_color, normal_off_color,"Walls", arial);
    		wall_button.button_obj.GetComponent<Button>().onClick.AddListener(wall_onClick); 
 
    		wall_mini_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 2 * 34f, 0),
-        			normal_on_color, normal_hl_color, normal_off_color,"Walls on Mini Map", arial);
+        			normal_on_color, normal_hl_color, normal_off_color,"Walls Mini-Map", arial);
    		wall_mini_button.button_obj.GetComponent<Button>().onClick.AddListener(mini_wall_onClick);
+
+
+   		month_mesh_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 3 * 34f, 0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Month Mesh", arial);
+   		month_mesh_button.button_obj.GetComponent<Button>().onClick.AddListener(month_mesh_onClick);
    		// slider.GetComponent()
 
         year_buttons = new VRButton[16];
@@ -1225,7 +1232,15 @@ public class cube_generator : MonoBehaviour
         }else{
             color_buffer.normalColor = wall_mini_button.off_color;
         };
-        wall_mini_button.button_obj.GetComponent<Button>().colors = color_buffer;        
+        wall_mini_button.button_obj.GetComponent<Button>().colors = color_buffer;            	
+
+        color_buffer = month_mesh_button.button_obj.GetComponent<Button>().colors;
+        if(dm.show_wall_mini){
+            color_buffer.normalColor = month_mesh_button.on_color;
+        }else{
+            color_buffer.normalColor = month_mesh_button.off_color;
+        };
+        month_mesh_button.button_obj.GetComponent<Button>().colors = color_buffer;        
 
         for(int i = 0; i < 12; ++i){
         	color_buffer = month_buttons[i].button_obj.GetComponent<Button>().colors;
@@ -1802,6 +1817,11 @@ public class cube_generator : MonoBehaviour
     void mini_wall_onClick()
     {
         dm.show_wall_mini = !dm.show_wall_mini;
+    }
+
+    void month_mesh_onClick()
+    {
+        dm.show_month_mesh = !dm.show_month_mesh;
     }
 
     void month_onClick(int i)
