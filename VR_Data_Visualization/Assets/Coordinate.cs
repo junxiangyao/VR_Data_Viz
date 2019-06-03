@@ -94,7 +94,7 @@ public class Coordinate
         line_renderer.startColor = color;
         line_renderer.endColor = color;
         for(int i = 0; i < resolution + 1; ++i){
-            line_renderer.SetPosition(i, new Vector3(r * Mathf.Sin(i * (Mathf.PI * 2) / resolution),0f,r * Mathf.Cos(i * (Mathf.PI * 2) / resolution)));
+            line_renderer.SetPosition(i, new Vector3(r * Mathf.Sin(i * (Mathf.PI * 2) / resolution),-0.009f,r * Mathf.Cos(i * (Mathf.PI * 2) / resolution)));
         }
     }
 

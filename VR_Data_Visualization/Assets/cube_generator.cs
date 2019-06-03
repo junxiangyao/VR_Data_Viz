@@ -89,6 +89,9 @@ public class cube_generator : MonoBehaviour
     GameObject mini_map;
     GameObject mini_map_out;
     GameObject player_marker; // marker on the mini map
+    GameObject player_marker_sphere; // marker on the mini map
+    GameObject player_marker_direction; // marker on the mini map
+    public GameObject direction_indicator; // marker on the mini map
     float rotation_counter;
     float yRotation = 0.0f; // rotation of the mini map
     float dist_mini = 0.0f;
@@ -166,6 +169,8 @@ public class cube_generator : MonoBehaviour
     GameObject label_release_text;
  	
  	bool show_release = true;
+
+ 	GameObject tutorial;
     // Start is called before the first frame update
     void Start()
     {
@@ -564,10 +569,29 @@ public class cube_generator : MonoBehaviour
         // player_marker = new GameObject("Mesh", typeof(MeshFilter), typeof(MeshRenderer));
         // drawMarker(player_marker, new Color(255 * 1.0f/255, 204 * 1.0f/255, 0 * 1.0f/255));
         player_marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        player_marker.transform.localScale = new Vector3(0.004f,0.1f,0.004f);
+        player_marker.transform.localScale = new Vector3(0.002f,0.1f,0.002f);
+        Destroy(player_marker.GetComponent<Collider>());
         player_marker.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
         player_marker.transform.SetParent(mini_map.transform);
         player_marker.transform.localPosition = new Vector3(0,5f,0); // impacted by the scaling of its parent
+
+        player_marker_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        player_marker_sphere.transform.localScale = new Vector3(0.012f,0.012f,0.012f);
+        Destroy(player_marker_sphere.GetComponent<Collider>());
+        player_marker_sphere.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
+        player_marker_sphere.transform.SetParent(player_marker.transform);
+        player_marker_sphere.transform.localPosition = new Vector3(0,0.5f,0); // impacted by the scaling of its parent
+
+        player_marker_direction = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        player_marker_direction.transform.localScale = new Vector3(0.006f,0.006f,0.006f);
+        player_marker_direction.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
+        // player_marker_direction = GameObject.Instantiate(direction_indicator, new Vector3(0, 0, 0), Quaternion.identity);
+        // player_marker_direction.transform.localScale = new Vector3(0.025f,0.01f,0.025f);
+        // player_marker_direction.GetComponent<Renderer>().material.color = new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255);
+        Destroy(player_marker_direction.GetComponent<Collider>());
+        player_marker_direction.transform.SetParent(player_marker.transform);
+        player_marker_direction.transform.localPosition = new Vector3(0,0.5f,6f); // impacted by the scaling of its parent
+
         hit_point = new GameObject();
 
         //------------------------------------------------ menus and buttons ------------------------------------------
@@ -799,7 +823,7 @@ public class cube_generator : MonoBehaviour
         label_release_text.GetComponent<Text>().font = arial;
         label_release_text.GetComponent<Text>().fontSize = 14;
         label_release_text.GetComponent<Text>().fontStyle = FontStyle.Normal;
-        label_release_text.GetComponent<Text>().color = Color.white;
+        label_release_text.GetComponent<Text>().color = Color.black;
         label_release_text.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
         label_release_text.transform.SetParent(label_release.transform);
         RectTransform rectTransform_lable_release;
@@ -855,6 +879,9 @@ public class cube_generator : MonoBehaviour
     	example_sphere.GetComponent<Renderer>().material.color = Color.black;
     	example_cube.transform.localPosition = new Vector3(0.2f,1.6f,1f); 
     	example_sphere.transform.localPosition = new Vector3(-0.2f,1.6f,1f); 
+
+
+    	tutorial = GameObject.Find("[Tutorial_Text]");
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().c_out);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[0].hover_obj.GetComponent<InfoCube>().index[0]);
         // Debug.Log("try:" + hm.years[3].months[0].day_list[1].data_list[1].hover_obj.GetComponent<InfoCube>().c_out);
@@ -886,6 +913,11 @@ public class cube_generator : MonoBehaviour
         year_this.SetActive(false);
         year_next.SetActive(false);
         label_release.SetActive(false);
+        example_sphere.SetActive(true);
+        example_cube.SetActive(true);
+        tutorial.SetActive(true);
+        
+  		player_marker.transform.localRotation = Quaternion.Euler(0, base_world.transform.rotation.eulerAngles.y, 0);
         scale_mode = false;
         Debug.Log(slider.GetComponent<Slider>().value);
         if(slider.GetComponent<Slider>().value < 0.95f){
@@ -1603,6 +1635,9 @@ public class cube_generator : MonoBehaviour
                     }
                 }
             }else if(scale_mode){
+            	example_sphere.SetActive(false);
+        		example_cube.SetActive(false);
+        		tutorial.SetActive(false);
             	if(GameObject.ReferenceEquals(hit.transform.gameObject, floor)){
             		float scale_multiplier = 0.1f + 0.2f * slider.GetComponent<Slider>().value;
             		dist_scale = Vector3.Distance(new Vector3(0,0,0), hit.point);
@@ -1708,14 +1743,49 @@ public class cube_generator : MonoBehaviour
                 hover_label_news.transform.localPosition = hover_label_news.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
             }else if(hit.transform.gameObject.CompareTag("date_marker_mini")){
             	label_release.SetActive(true);
+            	Vector3 pos_buffer;
+            	int i_buffer = hit.transform.gameObject.GetComponent<InfoCube>().index[0];
+
+
+            	if(i_buffer == 2 || i_buffer == 6 || i_buffer == 7  || i_buffer == 8  || i_buffer == 9  ){
+            		if(i_buffer == 2){
+	            		pos_buffer = release_VI.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
+	            		hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
+            		}else if(i_buffer == 6){
+	            		pos_buffer = release_VII.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
+	            		hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
+            		}else if(i_buffer == 7){
+	            		pos_buffer = release_VIII.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
+	            		hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
+            		}else if(i_buffer == 8){
+	            		pos_buffer = release_R.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
+	            		hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
+            		}else if(i_buffer == 9){
+	            		pos_buffer = release_S.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
+	            		hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
+            		}
+
+	                
+	                label_release.transform.localPosition = hit_point.transform.position;
+	                label_release_text.GetComponent<Text>().text =  " Release Date" + "\n" + title_short[i_buffer] + "\n";
+	                label_release_text.GetComponent<Text>().text += month_text[hit.transform.gameObject.GetComponent<InfoCube>().mb - 1] +
+                (hit.transform.gameObject.GetComponent<InfoCube>().db) + ". " + (hit.transform.gameObject.GetComponent<InfoCube>().yb);
+            	
+	          		if (right_controller.GetComponent<VRTK_ControllerEvents>().triggerPressed)
+	                {
+                        teleporter.ForceTeleport(new Vector3(hit_point.transform.position.x * 333f * 0.6f, 0, hit_point.transform.position.z * 333f * 0.6f),Quaternion.Euler(new Vector3(0, 0, 0)));
+                        world_scaler.transform.localScale = new Vector3(1f,1f,1f);
+                        slider.GetComponent<Slider>().value = 1f;
+	                }
+
+            	}
+
                 // label_release.transform.localPosition = new Vector3(0,0,0);
                 // label_release.transform.localPosition = new Vector3(
                 // 	release_VI.marker_obj.transform.position.x / 3f,
                 // 	release_VI.marker_obj.transform.position.y,
                 // 	release_VI.marker_obj.transform.position.z / 3f);
-                Vector3 pos_buffer = release_VI.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
-                hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
-                label_release.transform.localPosition = hit_point.transform.position;
+
                 // label_release.transform.localPosition = release_VI.marker_obj.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
 
                     // hit_point.transform.gameObject.transform.position.x,

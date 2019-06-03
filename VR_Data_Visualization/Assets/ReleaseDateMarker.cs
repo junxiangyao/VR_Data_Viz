@@ -54,7 +54,7 @@ public class ReleaseDateMarker : MonoBehaviour
         line_renderer.endColor = marker_color;
 
         line_renderer.SetPosition(0, marker_obj.transform.position);
-        line_renderer.SetPosition(1, new Vector3(marker_obj.transform.position.x, 0, marker_obj.transform.position.z));
+        line_renderer.SetPosition(1, new Vector3(marker_obj.transform.position.x, 0.01f, marker_obj.transform.position.z));
         locating_line.transform.SetParent(marker_obj.transform);
 
         // hover_obj.GetComponent<Renderer>().material.color = hover_color;

@@ -12452,16 +12452,32 @@ PrefabInstance:
     - target: {fileID: 114676128360407342, guid: 3d56870ea5ab696448e35ecae56a6c5e,
         type: 3}
       propertyPath: m_Text
-      value: "This project is an analysis of the Star Wars check-out history at the
-        Seattle Public Library. The check-out data were retreived using the titles
-        of the ten movies and the word \"star wars\" as the keyowrds. Also, the local
-        news\r data on corresponding dates were collected from the Seattle Times and
-        added to the visualization.\n"
+      value: '
+
+        This project is an analysis of the <b>Star Wars check-out history at  the
+        Seattle Public Library</b>. The check-out data were retrieved using the titles
+        of the ten movies and the word "star wars" as the keywords. Also, the local
+        news data on corresponding dates were collected from the Seattle Times and
+        added to the visualization.
+
+
+        Please read the labels attached to the controllers and use the pointer to
+        point to the example sphere and cube above.'
       objectReference: {fileID: 0}
     - target: {fileID: 114676128360407342, guid: 3d56870ea5ab696448e35ecae56a6c5e,
         type: 3}
       propertyPath: m_FontData.m_VerticalOverflow
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114676128360407342, guid: 3d56870ea5ab696448e35ecae56a6c5e,
+        type: 3}
+      propertyPath: m_FontData.m_FontStyle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114676128360407342, guid: 3d56870ea5ab696448e35ecae56a6c5e,
+        type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 224044212099514402, guid: 3d56870ea5ab696448e35ecae56a6c5e,
         type: 3}
@@ -25271,6 +25287,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubes: []
   current_radius: 4
+  direction_indicator: {fileID: 6990757346394782955, guid: 34c12bb5116b079438fcd43e84f5bd2b,
+    type: 3}
 --- !u!4 &1806275900
 Transform:
   m_ObjectHideFlags: 0
