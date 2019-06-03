@@ -7,6 +7,7 @@ using UnityEngine;
 using static Movie;
 using static Coordinate;
 
+
 public class DataManager
 {
     public int startYear;
@@ -45,7 +46,7 @@ public class DataManager
       new Color(163 * 1.0f/255, 37 * 1.0f/255, 235 * 1.0f/255), 
 
 
-      new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255), 
+      new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255), 
 
       new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255)
 
@@ -243,7 +244,7 @@ public class DataManager
                         // }
             }
             MovieObjs[mv].drawMonthDataMini(movie_colors[mv], line_material, month_buffer);
-            MovieObjs[mv].mini_month_object.transform.SetParent(MovieObjs[mv].mini_game_object.transform, true);
+            MovieObjs[mv].mini_month_object.transform.SetParent(mini_object.transform, true);
             // counter++;
         }
         

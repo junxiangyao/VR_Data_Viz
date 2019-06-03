@@ -8,6 +8,8 @@ using static StandardShaderUtils;
 using static DataManager;
 using static HoverManager;
 using static VRButton;
+using static ReleaseDateMarker;
+
 
 
 public class cube_generator : MonoBehaviour
@@ -154,14 +156,21 @@ public class cube_generator : MonoBehaviour
     GameObject example_cube;
 
 
+    ReleaseDateMarker release_VI;
+    ReleaseDateMarker release_VII;
+    ReleaseDateMarker release_VIII;
+    ReleaseDateMarker release_R;
+    ReleaseDateMarker release_S;
 
+    GameObject label_release;
+    GameObject label_release_text;
+ 	
+ 	bool show_release = true;
     // Start is called before the first frame update
     void Start()
     {
         /****************************************
             Loading data and draw main graphics
-
-
 
         *****************************************/
         QualitySettings.antiAliasing = 100;
@@ -636,7 +645,7 @@ public class cube_generator : MonoBehaviour
         		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>movie_onClick(index));
         	}else if(i == 10){
         		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
-        			dm.movie_colors[i], normal_hl_color, normal_off_color, "Sum & news", arial);
+        			dm.movie_colors[i], normal_hl_color, normal_off_color, "Sum", arial);
         		movie_buttons[i].button_obj.GetComponent<Button>().onClick.AddListener(()=>movie_onClick(10));
         	}else if(i == 11){
           		movie_buttons[i] = new VRButton(canvas_for_movies.transform, new Vector3(80,200f - i * 34f,0),
@@ -713,6 +722,7 @@ public class cube_generator : MonoBehaviour
         }
         mini_coordinate.drawCircle(mini_coordinate.circles[14], dm.getData(0,2018,12,31).hit_radius+INCREASE/60f, 80, Color.white);
         mini_coordinate.drawCircle(mini_coordinate.outer_circle, 34/200f , 80, Color.white);
+        mini_coordinate.drawContour(mini_coordinate.base_circle, 34/200f , 80, Color.white);
         mini_coordinate.drawCircle(mini_coordinate.inner_circle, 29/200f , 80, Color.white);
         
         // hover effect: date 
@@ -761,6 +771,43 @@ public class cube_generator : MonoBehaviour
         label_scale_pointer_line = generate_line(new Vector3(0,0.1f,0), new Vector3(0,1.685f,0), Color.black);
         label_scale_pointer_line.SetActive (false);
 
+        release_VI = new ReleaseDateMarker(dm.movie_colors[2],2, dm.MovieObjs[0].years[0].months[4].dayList[18].data.mini_position, 2005, 5, 19);
+        release_VII = new ReleaseDateMarker(dm.movie_colors[6],6, dm.MovieObjs[0].years[10].months[11].dayList[17].data.mini_position, 2015, 12, 18);
+        release_VIII = new ReleaseDateMarker(dm.movie_colors[7],7, dm.MovieObjs[0].years[11].months[11].dayList[15].data.mini_position, 2016, 12, 16);
+		release_R = new ReleaseDateMarker(dm.movie_colors[8],8, dm.MovieObjs[0].years[12].months[11].dayList[14].data.mini_position, 2017, 12, 15);
+		release_S = new ReleaseDateMarker(dm.movie_colors[9],9, dm.MovieObjs[0].years[13].months[4].dayList[24].data.mini_position, 2018, 5, 25);        
+
+
+		release_VI.drawSphere(0.1f);
+        release_VII.drawSphere(0.1f);
+        release_VIII.drawSphere(0.1f);
+		release_R.drawSphere(0.1f);
+		release_S.drawSphere(0.1f);	
+
+		release_VI.marker_obj.transform.SetParent(mini_map.transform);
+        release_VII.marker_obj.transform.SetParent(mini_map.transform);
+        release_VIII.marker_obj.transform.SetParent(mini_map.transform);
+		release_R.marker_obj.transform.SetParent(mini_map.transform);
+		release_S.marker_obj.transform.SetParent(mini_map.transform);
+	
+	 	label_release = GameObject.Find("LabelRelease");
+        label_release.GetComponent<Canvas>().sortingOrder = 2;
+        label_release.SetActive(false);
+        label_release_text = new GameObject();
+        label_release_text.AddComponent<Text>();
+        label_release_text.GetComponent<Text>().text = "Jan. 31. 2005";        
+        label_release_text.GetComponent<Text>().font = arial;
+        label_release_text.GetComponent<Text>().fontSize = 14;
+        label_release_text.GetComponent<Text>().fontStyle = FontStyle.Normal;
+        label_release_text.GetComponent<Text>().color = Color.white;
+        label_release_text.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+        label_release_text.transform.SetParent(label_release.transform);
+        RectTransform rectTransform_lable_release;
+        rectTransform_lable_release = label_release_text.GetComponent<Text>().GetComponent<RectTransform>();
+        rectTransform_lable_release.localPosition = new Vector3(0, 0, 0);
+        rectTransform_lable_release.localScale = new Vector3(0.001f,0.001f,0.001f);
+        rectTransform_lable_release.sizeDelta = new Vector2(480,300);
+        label_release.transform.SetParent(left_controller.transform, false);
 		//################################################## HINT ######################################################   
 
     	right_trigger = GameObject.Find("LabelTR");
@@ -838,6 +885,7 @@ public class cube_generator : MonoBehaviour
         local_date.SetActive(false);
         year_this.SetActive(false);
         year_next.SetActive(false);
+        label_release.SetActive(false);
         scale_mode = false;
         Debug.Log(slider.GetComponent<Slider>().value);
         if(slider.GetComponent<Slider>().value < 0.95f){
@@ -1089,10 +1137,21 @@ public class cube_generator : MonoBehaviour
         {
             // show/ hide movie
             dm.MovieObjs[mv].game_object.SetActive(dm.show_movies[mv]);
-            dm.MovieObjs[mv].mini_game_object.SetActive(dm.show_movies[mv]); 
-            dm.MovieObjs[mv].mini_month_object.SetActive(dm.show_month_mesh);
+            dm.MovieObjs[mv].mini_game_object.SetActive(dm.show_movies[mv]&&!dm.show_month_mesh); 
+            dm.MovieObjs[mv].mini_month_object.SetActive(dm.show_movies[mv]&&dm.show_month_mesh);
+            if(mv == 2){
+            	release_VI.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            }else if(mv == 6){
+            	release_VII.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            }else if(mv == 7){
+            	release_VIII.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            }else if(mv == 8){
+				release_R.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            }else if(mv == 9){
+				release_S.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            }
             for(int a = 0; a < 12; ++a){
-            	dm.MovieObjs[mv].mini_month_lines[a].SetActive(dm.show_months[a] && dm.show_date_lines);
+            	dm.MovieObjs[mv].mini_month_lines[a].SetActive(dm.show_date_lines);
             }
             for(int y = 0; y < 14; ++y)
             {
@@ -1235,7 +1294,7 @@ public class cube_generator : MonoBehaviour
         wall_mini_button.button_obj.GetComponent<Button>().colors = color_buffer;            	
 
         color_buffer = month_mesh_button.button_obj.GetComponent<Button>().colors;
-        if(dm.show_wall_mini){
+        if(dm.show_month_mesh){
             color_buffer.normalColor = month_mesh_button.on_color;
         }else{
             color_buffer.normalColor = month_mesh_button.off_color;
@@ -1250,6 +1309,16 @@ public class cube_generator : MonoBehaviour
 	            color_buffer.normalColor = month_buttons[i].off_color;
 	        }
 	        month_buttons[i].button_obj.GetComponent<Button>().colors = color_buffer;
+        }        
+
+        for(int i = 0; i < 11; ++i){
+        	color_buffer = movie_buttons[i].button_obj.GetComponent<Button>().colors;
+        	if(dm.show_movies[i]){
+	            color_buffer.normalColor = movie_buttons[i].on_color;
+	        }else{
+	            color_buffer.normalColor = movie_buttons[i].off_color;
+	        }
+	        movie_buttons[i].button_obj.GetComponent<Button>().colors = color_buffer;
         }
 
         for(int i = 0; i < 14; ++i){
@@ -1637,6 +1706,27 @@ public class cube_generator : MonoBehaviour
                     hit.transform.gameObject.transform.position.y,
                     hit.transform.gameObject.transform.position.z);
                 hover_label_news.transform.localPosition = hover_label_news.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
+            }else if(hit.transform.gameObject.CompareTag("date_marker_mini")){
+            	label_release.SetActive(true);
+                // label_release.transform.localPosition = new Vector3(0,0,0);
+                // label_release.transform.localPosition = new Vector3(
+                // 	release_VI.marker_obj.transform.position.x / 3f,
+                // 	release_VI.marker_obj.transform.position.y,
+                // 	release_VI.marker_obj.transform.position.z / 3f);
+                Vector3 pos_buffer = release_VI.marker_obj.transform.TransformPoint(new Vector3(0,5f,0));
+                hit_point.transform.position = left_controller.transform.worldToLocalMatrix.MultiplyPoint3x4(pos_buffer);
+                label_release.transform.localPosition = hit_point.transform.position;
+                // label_release.transform.localPosition = release_VI.marker_obj.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
+
+                    // hit_point.transform.gameObject.transform.position.x,
+                    // hit_point.transform.gameObject.transform.position.y,
+                    // hit_point.transform.gameObject.transform.position.z);
+                // hover_label_news_num.GetComponent<Text>().fontSize = 12;
+                // hover_label_movie_num.GetComponent<Text>().fontSize = 12;
+                // label_release.transform.localRotation = Quaternion.Euler(0, base_world.transform.rotation.eulerAngles.y, 0);
+                // label_release.transform.localPosition = hover_label_movie.transform.TransformPoint(new Vector3(0.03f, 0, -0.03f));
+                label_release.GetComponent<Image>().color = hit.transform.gameObject.GetComponent<Renderer>().material.color;
+
             }
         }
         
@@ -1822,6 +1912,11 @@ public class cube_generator : MonoBehaviour
     void month_mesh_onClick()
     {
         dm.show_month_mesh = !dm.show_month_mesh;
+    }    
+
+    void release_onClick()
+    {
+        show_release = !show_release;
     }
 
     void month_onClick(int i)

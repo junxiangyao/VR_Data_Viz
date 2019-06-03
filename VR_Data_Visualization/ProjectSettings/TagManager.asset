@@ -12,6 +12,7 @@ TagManager:
   - 'Destination '
   - data_node
   - news_node
+  - date_marker_mini
   layers:
   - Default
   - TransparentFX

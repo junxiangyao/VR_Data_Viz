@@ -7,7 +7,8 @@ public class Coordinate
 	public GameObject[] lines;
 	public GameObject[] circles;
 	public GameObject outer_circle;
-	public GameObject inner_circle;
+    public GameObject inner_circle;
+	public GameObject base_circle;
 	public GameObject coordinate_object;
 	public float LINE_WIDTH;
 	public Material line_material = new Material(Shader.Find("Sprites/Default"));
@@ -22,6 +23,8 @@ public class Coordinate
         this.outer_circle.transform.SetParent(this.coordinate_object.transform);
         this.inner_circle = new GameObject();
         this.inner_circle.transform.SetParent(this.coordinate_object.transform);
+        this.base_circle = new GameObject();
+        this.base_circle.transform.SetParent(this.coordinate_object.transform);
         this.LINE_WIDTH = line_width;
         for(int i = 0; i < 6; ++i){
             this.lines[i] = new GameObject();
@@ -76,6 +79,24 @@ public class Coordinate
         }
     }
 
+
+    public void drawContour(GameObject circle, float r, int resolution, Color color)
+    {
+        LineRenderer line_renderer = circle.AddComponent<LineRenderer>();
+        line_renderer.material = new Material(Shader.Find("Sprites/Default"));
+        line_renderer.widthMultiplier = LINE_WIDTH;
+        // line_renderer.sortingOrder = 1;
+        if(resolution < 8){
+            resolution = 8;
+        }
+        line_renderer.positionCount = resolution + 1;
+        line_renderer.useWorldSpace = false;
+        line_renderer.startColor = color;
+        line_renderer.endColor = color;
+        for(int i = 0; i < resolution + 1; ++i){
+            line_renderer.SetPosition(i, new Vector3(r * Mathf.Sin(i * (Mathf.PI * 2) / resolution),0f,r * Mathf.Cos(i * (Mathf.PI * 2) / resolution)));
+        }
+    }
 
     // Update is called once per frame
     void Update()
