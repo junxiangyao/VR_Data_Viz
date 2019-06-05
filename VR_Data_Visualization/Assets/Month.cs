@@ -23,7 +23,7 @@ public class Month
     public Mesh mesh_connect;
     public Material material_connect; 
     public float LINE_WIDTH = 0.005f;
-    public float LINE_WIDTH_MINI = 0.0003f;
+    public float LINE_WIDTH_MINI = 0.0004f;
 
     // for mini map
     public GameObject mini_month_data_line;  // main graphic

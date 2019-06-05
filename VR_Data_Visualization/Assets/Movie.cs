@@ -15,7 +15,7 @@ public class Movie
     public GameObject[] mini_month_lines;
     public GameObject[] date_lines_month;
     public float LINE_WIDTH = 0.002f; 
-    public float LINE_WIDTH_MINI = 0.0001f; 
+    public float LINE_WIDTH_MINI = 0.00012f; 
     public GameObject[] date_lines_day;
     public GameObject[] mini_date_lines_month;  
     public GameObject[] mini_date_lines_day;
@@ -48,7 +48,7 @@ public class Movie
     public void drawMonthDataMini(Color c, Material material, List<Vector3> nodes){
         LineRenderer line_renderer = mini_month_object.AddComponent<LineRenderer>();
         line_renderer.material = material;
-        line_renderer.widthMultiplier = LINE_WIDTH_MINI * 10;
+        line_renderer.widthMultiplier = LINE_WIDTH_MINI * 5;
         line_renderer.positionCount = nodes.Count;
         line_renderer.useWorldSpace = false;
         line_renderer.startColor = c;

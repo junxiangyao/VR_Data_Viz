@@ -47,7 +47,7 @@ public class ReleaseDateMarker : MonoBehaviour
 
         LineRenderer line_renderer = locating_line.AddComponent<LineRenderer>();
         line_renderer.material = new Material(Shader.Find("Sprites/Default"));
-        line_renderer.widthMultiplier = 0.0008f;
+        line_renderer.widthMultiplier = 0.00072f;
         line_renderer.positionCount = 2;
         line_renderer.useWorldSpace = false;
         line_renderer.startColor = marker_color;

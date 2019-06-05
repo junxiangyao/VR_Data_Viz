@@ -30,7 +30,7 @@ public class MetaData
         this.wall_position.y += 0.5f;
 
         this.mini_position.x = position.x / 60f; //local to mini map
-        this.mini_position.y = position.y * 2.4f;
+        this.mini_position.y = position.y * 2.0f;
         // this.mini_position.y = position.y / 10f -1f;
         this.mini_position.z = position.z / 60f;
 

@@ -91,7 +91,11 @@ public class cube_generator : MonoBehaviour
     GameObject player_marker; // marker on the mini map
     GameObject player_marker_sphere; // marker on the mini map
     GameObject player_marker_direction; // marker on the mini map
+    GameObject player_marker_ring; // marker on the mini map
+    GameObject player_marker_ring_1; // marker on the mini map
+    GameObject player_marker_ring_2; // marker on the mini map
     public GameObject direction_indicator; // marker on the mini map
+    public GameObject direction_ring; // marker on the mini map
     float rotation_counter;
     float yRotation = 0.0f; // rotation of the mini map
     float dist_mini = 0.0f;
@@ -142,6 +146,8 @@ public class cube_generator : MonoBehaviour
     VRButton wall_button;
     VRButton wall_mini_button;
     VRButton month_mesh_button;
+    VRButton release_marker_button;
+
     Color normal_on_color;
     Color normal_hl_color;
     Color normal_off_color;
@@ -168,7 +174,7 @@ public class cube_generator : MonoBehaviour
     GameObject label_release;
     GameObject label_release_text;
  	
- 	bool show_release = true;
+ 	bool show_release = false;
 
  	GameObject tutorial;
     // Start is called before the first frame update
@@ -569,28 +575,56 @@ public class cube_generator : MonoBehaviour
         // player_marker = new GameObject("Mesh", typeof(MeshFilter), typeof(MeshRenderer));
         // drawMarker(player_marker, new Color(255 * 1.0f/255, 204 * 1.0f/255, 0 * 1.0f/255));
         player_marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        player_marker.transform.localScale = new Vector3(0.002f,0.1f,0.002f);
+        // player_marker.transform.localScale = new Vector3(0.0032f,0.1f,0.0032f);
+        player_marker.transform.localScale = new Vector3(0.001f,0.1f,0.001f);
         Destroy(player_marker.GetComponent<Collider>());
         player_marker.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
         player_marker.transform.SetParent(mini_map.transform);
         player_marker.transform.localPosition = new Vector3(0,5f,0); // impacted by the scaling of its parent
 
         player_marker_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // player_marker_sphere.transform.localScale = new Vector3(0.008f,0.008f,0.008f);
         player_marker_sphere.transform.localScale = new Vector3(0.012f,0.012f,0.012f);
         Destroy(player_marker_sphere.GetComponent<Collider>());
         player_marker_sphere.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
         player_marker_sphere.transform.SetParent(player_marker.transform);
         player_marker_sphere.transform.localPosition = new Vector3(0,0.5f,0); // impacted by the scaling of its parent
 
-        player_marker_direction = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        player_marker_direction.transform.localScale = new Vector3(0.006f,0.006f,0.006f);
+        // player_marker_direction = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // player_marker_direction.transform.localScale = new Vector3(0.006f,0.006f,0.006f);
+        // player_marker_direction.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
+        player_marker_direction = GameObject.Instantiate(direction_indicator, new Vector3(0, 0, 0), Quaternion.identity);
+        player_marker_direction.transform.localScale = new Vector3(0.025f,0.005f,0.012f);
         player_marker_direction.GetComponent<Renderer>().material.color = new Color(255 * 1.0f/255, 255 * 1.0f/255, 255 * 1.0f/255);
-        // player_marker_direction = GameObject.Instantiate(direction_indicator, new Vector3(0, 0, 0), Quaternion.identity);
-        // player_marker_direction.transform.localScale = new Vector3(0.025f,0.01f,0.025f);
-        // player_marker_direction.GetComponent<Renderer>().material.color = new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255);
+        // player_marker_direction.GetComponent<Renderer>().material.color = new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255);
         Destroy(player_marker_direction.GetComponent<Collider>());
         player_marker_direction.transform.SetParent(player_marker.transform);
-        player_marker_direction.transform.localPosition = new Vector3(0,0.5f,6f); // impacted by the scaling of its parent
+        player_marker_direction.transform.localPosition = new Vector3(0,0.5f,9f); // impacted by the scaling of its parent
+
+        // player_marker_ring = GameObject.Instantiate(direction_ring, new Vector3(0, 0, 0), Quaternion.identity);
+        // player_marker_ring = generate_arc(0.2f,20,new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255));
+        // player_marker_ring.transform.localScale = new Vector3(0.05f,0.01f,0.05f);
+        // // player_marker_ring.GetComponent<Renderer>().material.color = new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255);
+        // Destroy(player_marker_ring.GetComponent<Collider>());
+        // player_marker_ring.transform.SetParent(player_marker.transform);
+        // player_marker_ring.transform.localPosition = new Vector3(0,0.5f,0f); // impacted by the scaling of its parent
+
+        // player_marker_ring_1 = generate_ring(0.2f,20,new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255));
+        // // player_marker_ring_1.transform.localScale = new Vector3(0.05f,0.01f,0.05f);
+        // // player_marker_ring.GetComponent<Renderer>().material.color = new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255);
+        // Destroy(player_marker_ring_1.GetComponent<Collider>());
+        // player_marker_ring_1.transform.SetParent(player_marker.transform);
+        // player_marker_ring_1.transform.localPosition = new Vector3(0,0.5f,0f); 
+        // player_marker_ring_1.transform.localRotation = Quaternion.Euler(90, 0, 0);
+
+        // player_marker_ring_2 = generate_ring(0.2f,20,new Color(209 * 1.0f/255, 192 * 1.0f/255, 165 * 1.0f/255));
+        
+        // // player_marker_ring.GetComponent<Renderer>().material.color = new Color(220 * 1.0f/255, 220 * 1.0f/255, 220 * 1.0f/255);
+        // Destroy(player_marker_ring_2.GetComponent<Collider>());
+        // player_marker_ring_2.transform.SetParent(player_marker.transform);
+        // player_marker_ring_2.transform.localPosition = new Vector3(0,0.5f,0f); 
+        // player_marker_ring_2.transform.localRotation = Quaternion.Euler(0, 0, 90);
+        // player_marker_ring_2.transform.localScale = new Vector3(1f,0.0333f,30f);
 
         hit_point = new GameObject();
 
@@ -621,7 +655,11 @@ public class cube_generator : MonoBehaviour
 
    		month_mesh_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 3 * 34f, 0),
         			normal_on_color, normal_hl_color, normal_off_color,"Month Mesh", arial);
-   		month_mesh_button.button_obj.GetComponent<Button>().onClick.AddListener(month_mesh_onClick);
+   		month_mesh_button.button_obj.GetComponent<Button>().onClick.AddListener(month_mesh_onClick);   		
+
+   		release_marker_button = new VRButton(canvas_for_movies.transform, new Vector3(240, 200f - 4 * 34f, 0),
+        			normal_on_color, normal_hl_color, normal_off_color,"Release Dates", arial);
+   		release_marker_button.button_obj.GetComponent<Button>().onClick.AddListener(release_onClick);
    		// slider.GetComponent()
 
         year_buttons = new VRButton[16];
@@ -736,7 +774,7 @@ public class cube_generator : MonoBehaviour
         }
 
         // draw coordinate lines
-        mini_coordinate = new Coordinate(0.0003f);
+        mini_coordinate = new Coordinate(0.0001f);
         mini_coordinate.coordinate_object.transform.SetParent(mini_map.transform);
         mini_coordinate.coordinate_object.transform.localPosition = new Vector3(0,0,0);
         // mini_coordinate.drawCoordinate((current_radius+INCREASE)/200f);
@@ -797,8 +835,8 @@ public class cube_generator : MonoBehaviour
 
         release_VI = new ReleaseDateMarker(dm.movie_colors[2],2, dm.MovieObjs[0].years[0].months[4].dayList[18].data.mini_position, 2005, 5, 19);
         release_VII = new ReleaseDateMarker(dm.movie_colors[6],6, dm.MovieObjs[0].years[10].months[11].dayList[17].data.mini_position, 2015, 12, 18);
-        release_VIII = new ReleaseDateMarker(dm.movie_colors[7],7, dm.MovieObjs[0].years[11].months[11].dayList[15].data.mini_position, 2016, 12, 16);
-		release_R = new ReleaseDateMarker(dm.movie_colors[8],8, dm.MovieObjs[0].years[12].months[11].dayList[14].data.mini_position, 2017, 12, 15);
+        release_VIII = new ReleaseDateMarker(dm.movie_colors[7],7, dm.MovieObjs[0].years[12].months[11].dayList[14].data.mini_position, 2017, 12, 15);
+		release_R = new ReleaseDateMarker(dm.movie_colors[8],8, dm.MovieObjs[0].years[11].months[11].dayList[15].data.mini_position, 2016, 12, 16);
 		release_S = new ReleaseDateMarker(dm.movie_colors[9],9, dm.MovieObjs[0].years[13].months[4].dayList[24].data.mini_position, 2018, 5, 25);        
 
 
@@ -938,6 +976,11 @@ public class cube_generator : MonoBehaviour
         		teleporter.ForceTeleport(position_buffer,rotation_buffer);
         	}
         	pre_status = 0;
+        }
+        if(scale_mode){
+        	example_sphere.SetActive(false);
+        	example_cube.SetActive(false);
+        	tutorial.SetActive(false);
         }
         
 
@@ -1172,15 +1215,15 @@ public class cube_generator : MonoBehaviour
             dm.MovieObjs[mv].mini_game_object.SetActive(dm.show_movies[mv]&&!dm.show_month_mesh); 
             dm.MovieObjs[mv].mini_month_object.SetActive(dm.show_movies[mv]&&dm.show_month_mesh);
             if(mv == 2){
-            	release_VI.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            	release_VI.marker_obj.SetActive(show_release);
             }else if(mv == 6){
-            	release_VII.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            	release_VII.marker_obj.SetActive(show_release);
             }else if(mv == 7){
-            	release_VIII.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+            	release_VIII.marker_obj.SetActive(show_release);
             }else if(mv == 8){
-				release_R.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+				release_R.marker_obj.SetActive(show_release);
             }else if(mv == 9){
-				release_S.marker_obj.SetActive(dm.show_movies[mv] && show_release);
+				release_S.marker_obj.SetActive(show_release);
             }
             for(int a = 0; a < 12; ++a){
             	dm.MovieObjs[mv].mini_month_lines[a].SetActive(dm.show_date_lines);
@@ -1331,7 +1374,15 @@ public class cube_generator : MonoBehaviour
         }else{
             color_buffer.normalColor = month_mesh_button.off_color;
         };
-        month_mesh_button.button_obj.GetComponent<Button>().colors = color_buffer;        
+        month_mesh_button.button_obj.GetComponent<Button>().colors = color_buffer;   
+
+        color_buffer = release_marker_button.button_obj.GetComponent<Button>().colors;
+        if(show_release){
+            color_buffer.normalColor = release_marker_button.on_color;
+        }else{
+            color_buffer.normalColor = release_marker_button.off_color;
+        };
+        release_marker_button.button_obj.GetComponent<Button>().colors = color_buffer;        
 
         for(int i = 0; i < 12; ++i){
         	color_buffer = month_buttons[i].button_obj.GetComponent<Button>().colors;
@@ -1635,9 +1686,6 @@ public class cube_generator : MonoBehaviour
                     }
                 }
             }else if(scale_mode){
-            	example_sphere.SetActive(false);
-        		example_cube.SetActive(false);
-        		tutorial.SetActive(false);
             	if(GameObject.ReferenceEquals(hit.transform.gameObject, floor)){
             		float scale_multiplier = 0.1f + 0.2f * slider.GetComponent<Slider>().value;
             		dist_scale = Vector3.Distance(new Vector3(0,0,0), hit.point);
@@ -1877,6 +1925,51 @@ public class cube_generator : MonoBehaviour
         LineRenderer line_renderer = circle.AddComponent<LineRenderer>();
         line_renderer.material = new Material(Shader.Find("Sprites/Default"));
         line_renderer.widthMultiplier = 0.004f;
+        line_renderer.useWorldSpace = false;
+        // line_renderer.sortingOrder = 1;
+        if(resolution < 8){
+            resolution = 8;
+        }
+        line_renderer.positionCount = resolution + 1;
+        // line_renderer.useWorldSpace = true;
+        line_renderer.startColor = color;
+        line_renderer.endColor = color;
+        for(int i = 0; i < resolution + 1; ++i){
+            line_renderer.SetPosition(i, new Vector3(r * Mathf.Sin(i * (Mathf.PI * 2) / resolution),0,r * Mathf.Cos(i * (Mathf.PI * 2) / resolution)));
+        }
+        return circle;
+    } 
+
+
+    public GameObject generate_arc(float r, int resolution, Color color)
+    {
+        GameObject circle = new GameObject();
+        LineRenderer line_renderer = circle.AddComponent<LineRenderer>();
+        line_renderer.material = new Material(Shader.Find("Sprites/Default"));
+        line_renderer.widthMultiplier = 0.001f;
+        line_renderer.useWorldSpace = false;
+        // line_renderer.sortingOrder = 1;
+        if(resolution < 8){
+            resolution = 8;
+        }
+        line_renderer.positionCount = resolution;
+        // line_renderer.useWorldSpace = true;
+        line_renderer.startColor = color;
+        line_renderer.endColor = color;
+        for(int i = 0; i < resolution; ++i){
+            line_renderer.SetPosition(i, new Vector3(r * Mathf.Sin(i * (Mathf.PI * 2) / (resolution * 6.0f) - Mathf.PI / 6.0f), 
+            	0, r * Mathf.Cos(i * (Mathf.PI * 2) / (resolution * 6.0f) - Mathf.PI / 6.0f)));
+        }        
+    
+        return circle;
+    }
+
+    public GameObject generate_ring(float r, int resolution, Color color)
+    {
+        GameObject circle = new GameObject();
+        LineRenderer line_renderer = circle.AddComponent<LineRenderer>();
+        line_renderer.material = new Material(Shader.Find("Sprites/Default"));
+        line_renderer.widthMultiplier = 0.0008f;
         line_renderer.useWorldSpace = false;
         // line_renderer.sortingOrder = 1;
         if(resolution < 8){

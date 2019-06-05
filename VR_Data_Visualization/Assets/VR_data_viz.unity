@@ -12484,6 +12484,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 1000
       objectReference: {fileID: 0}
+    - target: {fileID: 224044212099514402, guid: 3d56870ea5ab696448e35ecae56a6c5e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 114404080296554676, guid: 3d56870ea5ab696448e35ecae56a6c5e,
         type: 3}
       propertyPath: m_Color.r
@@ -12503,6 +12508,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Text
       value: <b>Visualizing Time-Oriented Data in VR</b>
+      objectReference: {fileID: 0}
+    - target: {fileID: 224371738333264858, guid: 3d56870ea5ab696448e35ecae56a6c5e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 720
+      objectReference: {fileID: 0}
+    - target: {fileID: 224339459913635852, guid: 3d56870ea5ab696448e35ecae56a6c5e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d56870ea5ab696448e35ecae56a6c5e, type: 3}
@@ -25288,6 +25303,8 @@ MonoBehaviour:
   cubes: []
   current_radius: 4
   direction_indicator: {fileID: 6990757346394782955, guid: 34c12bb5116b079438fcd43e84f5bd2b,
+    type: 3}
+  direction_ring: {fileID: 8181962775203288650, guid: fb84955c9f6111c48ba39496e8ea6739,
     type: 3}
 --- !u!4 &1806275900
 Transform:
